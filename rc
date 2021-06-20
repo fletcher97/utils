@@ -16,7 +16,7 @@ alias gws="gw -fsanitize=address"
 
 # Utility aliases
 alias cls="clear"
-LESS="-x4"
+LESS="-FRXx4"
 
 # Valgrind aliases
 alias vg="valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all \
