@@ -58,17 +58,6 @@ OBJ_ROOT := obj/
 SRC_ROOT := src/
 
 ################################################################################
-# Libraries
-################################################################################
-
-# Libft
-LIBFT_ROOT := ${LIB_ROOT}libft/
-LIBFT_INC := ${LIBFT_ROOT}inc/
-LIBFT := ${LIBFT_ROOT}bin/libft.a
-
-#LIBS := -L${LIBFT_ROOT}bin -lft
-
-################################################################################
 # Content Folders
 ################################################################################
 
@@ -111,13 +100,15 @@ INCS := ${addprefix -I,${INC_DIRS}}
 BINS := ${addprefix ${BIN_ROOT},${NAMES}}
 
 ################################################################################
-# VPATHS
+# Libraries
 ################################################################################
 
-vpath %.o $(OBJ_ROOT)
-vpath %.h $(INC_ROOT)
-vpath %.c $(SRC_DIRS)
-vpath %.d $(DEP_DIRS)
+# Libft
+LIBFT_ROOT := ${LIB_ROOT}libft/
+LIBFT_INC := ${LIBFT_ROOT}inc/
+LIBFT := ${LIBFT_ROOT}bin/libft.a
+
+#LIBS := -L${LIBFT_ROOT}bin -lft
 
 ################################################################################
 # Conditions
@@ -143,6 +134,15 @@ else ifeq ($(VERBOSE),4)
 endif
 
 ################################################################################
+# VPATHS
+################################################################################
+
+vpath %.o $(OBJ_ROOT)
+vpath %.h $(INC_ROOT)
+vpath %.c $(SRC_DIRS)
+vpath %.d $(DEP_DIRS)
+
+################################################################################
 # Project Target
 ################################################################################
 
@@ -152,34 +152,14 @@ all: ${BINS}
 ${BIN_ROOT}${NAME1}: $$(call get_files,$${@F},$${OBJS_LIST})
 	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${@D} ${BLOCK}
-	${AT}${CC} ${CFLAGS} ${INCS} $(call get_files,${@F},${OBJS_LIST}) ${LIBS} -o $@ ${BLOCK}
+	${AT}${CC} ${CFLAGS} ${INCS} $(call get_files,${@F},${OBJS_LIST}) ${LIBS}\
+		-o $@ ${BLOCK}
 
 ${BIN_ROOT}${NAME2}: $$(call get_files,$${@F},$${OBJS_LIST})
 	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${@D} ${BLOCK}
-	${AT}${CC} ${CFLAGS} ${INCS} $(call get_files,${@F},${OBJS_LIST}) ${LIBS} -o $@ ${BLOCK}
-
-################################################################################
-# Setup Target
-################################################################################
-
-.init:
-	${AT}printf "\033[33m[CREATING FOLDER STRUCTURE]\033[0m\n" ${BLOCK}
-	${AT}mkdir -p ${BIN_ROOT} ${BLOCK}
-	${AT}mkdir -p ${DEP_ROOT} ${BLOCK}
-	${AT}mkdir -p ${INC_ROOT} ${BLOCK}
-	${AT}mkdir -p ${OBJ_ROOT} ${BLOCK}
-	${AT}mkdir -p ${SRC_ROOT} ${BLOCK}
-	${AT}mkdir -p ${TESTS_ROOT} ${BLOCK}
-	${AT}printf "\033[33m[INITIALIZING GIT REPOSITORY]\033[0m\n" ${BLOCK}
-	${AT}git init ${BLOCK}
-	${AT}echo "*.o\n*.d\n.vscode\na.out\n.DS_Store" > .gitignore ${BLOCK}
-	${AT}date > $@ ${BLOCK}
-	${AT}printf "\033[33m[CREATING FIRST COMMIT]\033[0m\n" ${BLOCK}
-	${AT}git add .gitignore ${BLOCK}
-	${AT}git add $@ ${BLOCK}
-	${AT}git add Makefile ${BLOCK}
-	${AT}git commit -m "init" ${BLOCK}
+	${AT}${CC} ${CFLAGS} ${INCS} $(call get_files,${@F},${OBJS_LIST}) ${LIBS}\
+		-o $@ ${BLOCK}
 
 ################################################################################
 # Clean Targets
@@ -193,7 +173,8 @@ clean:
 fclean: clean
 	${AT}printf "\033[38;5;1m[REMOVING BINARIES]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${BIN_ROOT} ${BLOCK}
-	${AT}find ${BIN_ROOT} -type f $(addprefix "-name ", ${NAMES}) -delete ${BLOCK}
+	${AT}find ${BIN_ROOT} -type f\
+		$(addprefix "-name ",${NAMES}) -delete ${BLOCK}
 
 clean_dep:
 	${AT}printf "\033[38;5;1m[REMOVING DEPENDENCIES]\033[0m\n" ${BLOCK}
@@ -217,6 +198,28 @@ debug: all
 debug_re: fclean debug
 
 ################################################################################
+# Utility Targets
+################################################################################
+
+.init:
+	${AT}printf "\033[33m[CREATING FOLDER STRUCTURE]\033[0m\n" ${BLOCK}
+	${AT}mkdir -p ${BIN_ROOT} ${BLOCK}
+	${AT}mkdir -p ${DEP_ROOT} ${BLOCK}
+	${AT}mkdir -p ${INC_ROOT} ${BLOCK}
+	${AT}mkdir -p ${OBJ_ROOT} ${BLOCK}
+	${AT}mkdir -p ${SRC_ROOT} ${BLOCK}
+	${AT}mkdir -p ${TESTS_ROOT} ${BLOCK}
+	${AT}printf "\033[33m[INITIALIZING GIT REPOSITORY]\033[0m\n" ${BLOCK}
+	${AT}git init ${BLOCK}
+	${AT}echo "*.o\n*.d\n.vscode\na.out\n.DS_Store" > .gitignore ${BLOCK}
+	${AT}date > $@ ${BLOCK}
+	${AT}printf "\033[33m[CREATING FIRST COMMIT]\033[0m\n" ${BLOCK}
+	${AT}git add .gitignore ${BLOCK}
+	${AT}git add $@ ${BLOCK}
+	${AT}git add Makefile ${BLOCK}
+	${AT}git commit -m "init" ${BLOCK}
+
+################################################################################
 # .PHONY
 ################################################################################
 
@@ -234,7 +237,7 @@ SPACE = ${NULL} #
 ################################################################################
 
 # Get the index of a given word in a list
-_index = $(if $(findstring $1,$2), $(call _index,$1,\
+_index = $(if $(findstring $1,$2),$(call _index,$1,\
 	$(wordlist 2,$(words $2),$2),x $3),$3)
 index = $(words $(call _index,$1,$2))
 
