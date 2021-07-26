@@ -188,19 +188,19 @@ ${BIN_ROOT}${NAME2}: $$(call get_files,$${@F},$${OBJS_LIST})
 clean:
 	${AT}printf "\033[38;5;1m[REMOVING OBJECTS]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${OBJ_ROOT} ${BLOCK}
-	${AT}find ${OBJ_ROOT} -type f -delete ${BLOCK}
+	${AT}find ${OBJ_ROOT} -type f -name "*.o" -delete ${BLOCK}
 
 fclean: clean
 	${AT}printf "\033[38;5;1m[REMOVING BINARIES]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${BIN_ROOT} ${BLOCK}
-	${AT}find ${BIN_ROOT} -type f -delete ${BLOCK}
+	${AT}find ${BIN_ROOT} -type f $(addprefix "-name ", ${NAMES}) -delete ${BLOCK}
 
 clean_dep:
 	${AT}printf "\033[38;5;1m[REMOVING DEPENDENCIES]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${DEP_ROOT} ${BLOCK}
-	${AT}find ${DEP_ROOT} -type f -delete ${BLOCK}
+	${AT}find ${DEP_ROOT} -type f -name "*.d" -delete ${BLOCK}
 
-clean_all: clean_dep fclean
+clean_all: fclean clean_dep
 
 re: fclean all
 
