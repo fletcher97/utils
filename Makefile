@@ -70,47 +70,6 @@ OBJ_ROOT := obj/
 SRC_ROOT := src/
 
 ################################################################################
-# Content Folders
-################################################################################
-
-# Lists of ':' separated folders inside SRC_ROOT containing source files. Each
-# folder needs to end with a '/'. The path to the folders is relative to
-# SRC_ROOTIf SRC_ROOT contains files './' needs to be in the list. Each list is
-# separated by a space or by going to a new line and adding onto the var.
-# Exemple:
-# DIRS := folder1/:folder2/
-# DIRS += folder1/:folder3/:folder4/
-DIRS := ./
-
-SRC_DIRS_LIST := $(addprefix ${SRC_ROOT},${DIRS})
-SRC_DIRS_LIST := $(foreach dl,${SRC_DIRS_LIST},$(subst :,:${SRC_ROOT},${dl}))
-
-SRC_DIRS = $(call rmdup,$(subst :,${SPACE},${SRC_DIRS_LIST}))
-OBJ_DIRS = $(subst ${SRC_ROOT},${OBJ_ROOT},${SRC_DIRS})
-DEP_DIRS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRC_DIRS})
-
-# List of folders with header files.Each folder needs to end with a '/'. The
-# path to the folders is relative to the root of the makefile. Library includes
-# can be specified here.
-INC_DIRS := ${INC_ROOT}
-
-################################################################################
-# Files
-################################################################################
-
-SRCS_LIST = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip $(foreach\
-	dir,$(subst :,${SPACE},${dl}),$(wildcard ${dir}*.c)))))
-OBJS_LIST = $(subst ${SRC_ROOT},${OBJ_ROOT},$(subst .c,.o,${SRCS_LIST}))
-
-SRCS = $(foreach dir,${SRC_DIRS},$(wildcard ${dir}*.c))
-OBJS = $(subst ${SRC_ROOT},${OBJ_ROOT},${SRCS:.c=.o})
-DEPS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRCS:.c=.d})
-
-INCS := ${addprefix -I,${INC_DIRS}}
-
-BINS := ${addprefix ${BIN_ROOT},${NAMES}}
-
-################################################################################
 # Libraries
 ################################################################################
 
@@ -138,6 +97,47 @@ DEFAULT_LIB_RULES := all clean re
 # don't want.
 DEFAULT_LIB_RULES += fclean clean_all clean_dep
 DEFAULT_LIB_RULES += debug debug_re debug_asan debug_asan_re
+
+################################################################################
+# Content Folders
+################################################################################
+
+# Lists of ':' separated folders inside SRC_ROOT containing source files. Each
+# folder needs to end with a '/'. The path to the folders is relative to
+# SRC_ROOTIf SRC_ROOT contains files './' needs to be in the list. Each list is
+# separated by a space or by going to a new line and adding onto the var.
+# Exemple:
+# DIRS := folder1/:folder2/
+# DIRS += folder1/:folder3/:folder4/
+DIRS := ./
+
+SRC_DIRS_LIST := $(addprefix ${SRC_ROOT},${DIRS})
+SRC_DIRS_LIST := $(foreach dl,${SRC_DIRS_LIST},$(subst :,:${SRC_ROOT},${dl}))
+
+SRC_DIRS = $(call rmdup,$(subst :,${SPACE},${SRC_DIRS_LIST}))
+OBJ_DIRS = $(subst ${SRC_ROOT},${OBJ_ROOT},${SRC_DIRS})
+DEP_DIRS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRC_DIRS})
+
+# List of folders with header files.Each folder needs to end with a '/'. The
+# path to the folders is relative to the root of the makefile. Library includes
+# can be specified here.
+INC_DIRS += ${INC_ROOT}
+
+################################################################################
+# Files
+################################################################################
+
+SRCS_LIST = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip $(foreach\
+	dir,$(subst :,${SPACE},${dl}),$(wildcard ${dir}*.c)))))
+OBJS_LIST = $(subst ${SRC_ROOT},${OBJ_ROOT},$(subst .c,.o,${SRCS_LIST}))
+
+SRCS = $(foreach dir,${SRC_DIRS},$(wildcard ${dir}*.c))
+OBJS = $(subst ${SRC_ROOT},${OBJ_ROOT},${SRCS:.c=.o})
+DEPS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRCS:.c=.d})
+
+INCS := ${addprefix -I,${INC_DIRS}}
+
+BINS := ${addprefix ${BIN_ROOT},${NAMES}}
 
 ################################################################################
 # Conditions
