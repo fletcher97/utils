@@ -145,10 +145,8 @@ BINS := ${addprefix ${BIN_ROOT},${NAMES}}
 
 ifeq ($(shell uname),Linux)
 	SED := sed -i.tmp --expression
-	SED_END := && rm -f $@.tmp
 else ifeq ($(shell uname),Darwin)
 	SED := sed -i.tmp
-	SED_END := && rm -f $@.tmp
 endif
 
 ifeq ($(VERBOSE),0)
@@ -330,8 +328,9 @@ ${1}: ${2}
 	$${AT}mkdir -p $${@D} $${BLOCK}
 	$${AT}$${CC} -MM $$< $${INCS} -MF $$@ $${BLOCK}
 	$${AT}$${SED} 's|:| $$@ :|' $$@ $${SED_END} $${BLOCK}
-	$${AT}$${SED} '1 s|^|$${@D}/|' $$@ $${SED_END} $${BLOCK}
-	$${AT}$${SED} '1 s|^$${DEP_ROOT}|$${OBJ_ROOT}|' $$@ $${SED_END} $${BLOCK}
+	$${AT}$${SED} '1 s|^|$${@D}/|' $$@ && rm -f $$@.tmp $${BLOCK}
+	$${AT}$${SED} '1 s|^$${DEP_ROOT}|$${OBJ_ROOT}|' $$@\
+		&& rm -f $$@.tmp $${BLOCK}
 endef
 
 define make_lib_def
@@ -343,8 +342,10 @@ endef
 # Target Generator
 ################################################################################
 
-$(foreach bin,${BINS},$(eval\
-$(call make_bin_def,$(notdir ${bin}),${bin})))
+ifneq (${BIN_ROOT},./)
+	$(foreach bin,${BINS},$(eval\
+	$(call make_bin_def,$(notdir ${bin}),${bin})))
+endif
 
 $(foreach src,${SRCS},$(eval\
 $(call make_dep_def,$(subst ${SRC_ROOT},${DEP_ROOT},${src:.c=.d}),${src})))
