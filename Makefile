@@ -240,7 +240,6 @@ debug_asan_re: fclean debug_asan
 	${AT}mkdir -p ${INC_ROOT} ${BLOCK}
 	${AT}mkdir -p ${OBJ_ROOT} ${BLOCK}
 	${AT}mkdir -p ${SRC_ROOT} ${BLOCK}
-	${AT}mkdir -p ${TESTS_ROOT} ${BLOCK}
 	${AT}printf "\033[33m[INITIALIZING GIT REPOSITORY]\033[0m\n" ${BLOCK}
 	${AT}git init ${BLOCK}
 	${AT}echo "*.o\n*.d\n.vscode\na.out\n.DS_Store" > .gitignore ${BLOCK}
@@ -343,8 +342,8 @@ endef
 ################################################################################
 
 ifneq (${BIN_ROOT},./)
-	$(foreach bin,${BINS},$(eval\
-	$(call make_bin_def,$(notdir ${bin}),${bin})))
+$(foreach bin,${BINS},$(eval\
+$(call make_bin_def,$(notdir ${bin}),${bin})))
 endif
 
 $(foreach src,${SRCS},$(eval\
