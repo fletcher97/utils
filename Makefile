@@ -7,7 +7,7 @@
 
 # As of version 2.2 this Makefile expects an asan.c file to be present in the
 # asan folder inside the SRC_ROOT directory. A copy of the file is provided
-# with the Makefile
+# with the Makefile. Also it now uses clang instead of gcc.
 
 # This makefile can be copied to a directory and it will generate the file
 # structure and initialize a git repository with the .init rule. Any variables
@@ -57,7 +57,7 @@ CREATE_LIB_TARGETS := 1
 ################################################################################
 
 # Compiler
-CC := gcc
+CC := clang
 
 # Compiler flags
 CFLAGS := -Wall -Wextra -Werror -Wvla
@@ -71,9 +71,12 @@ ASAN += -fno-omit-frame-pointer -fno-common
 ASAN += -fsanitize=pointer-subtract -fsanitize=pointer-compare
 # Technicaly UBSan but works with ASan
 ASAN += -fsanitize=undefined
+# Technicaly LSan but works with ASan
+ASAN += -fsanitize=leak
 # Thread sanitizing flags
 TSAN := -fsanitize=thread
-
+# Memory sanitizing flags
+MSAN := -fsanitize=memory -fsanitize-memory-track-origins
 
 ################################################################################
 # Root Folders
@@ -118,7 +121,7 @@ DEFAULT_LIB_RULES += debug debug_re debug_asan debug_asan_re
 # All projects with a copy of this makefile v2.2 and up ate garanteed to work
 # with these targets. If you wish to not use them just comment the lines you
 # don't want.
-DEFAULT_LIB_RULES += debug_tsan debug_tsan_re
+DEFAULT_LIB_RULES += debug_tsan debug_tsan_re debug_msan debug_msan_re
 
 ################################################################################
 # Content Folders
@@ -255,11 +258,16 @@ debug_asan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) obj/asan/asan.o all
 debug_tsan: CFLAGS += ${DFLAGS} ${TSAN}
 debug_tsan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
 
+debug_msan: CFLAGS += ${DFLAGS} ${MSAN}
+debug_msan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
+
 debug_re: fclean debug
 
 debug_asan_re: fclean debug_asan
 
 debug_tsan_re: fclean debug_tsan
+
+debug_msan_re: fclean debug_msan
 
 ################################################################################
 # Utility Targets
