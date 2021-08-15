@@ -293,6 +293,9 @@ debug_msan_re: fclean debug_msan
 # Meta target to force a target to be executed
 .FORCE: ;
 
+# Print a specifique variable
+print-%: ; @echo $*=$($*)
+
 # List all the targets in alphabetical order
 targets:
 	${AT}${MAKE} LC_ALL=C -pRrq -f ${CURRENT_FILE} : 2>/dev/null\
