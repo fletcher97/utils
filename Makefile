@@ -388,7 +388,7 @@ ${1}/${2}: .FORCE
 endef
 
 define make_compile_test_def
-compile-test/$${1}: .FORCE
+compile-test/${1}: .FORCE
 	$${AT}printf "\033[33m[TESTING $${@F}]\033[0m\n" $${BLOCK}
 	$${AT}$${CC} $${CFLAGS} -fsyntax-only $${INCS} $${ASAN_FILE}\
 		$$(call get_files,$${@F},$${SRCS_LIST}) $${BLOCK}
