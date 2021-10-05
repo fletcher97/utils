@@ -3,7 +3,11 @@
 ################################################################################
 
 # Makefile by fletcher97
-# Version: 2.1
+# Version: 2.2
+
+# As of version 2.2 this Makefile expects an asan.c file to be present in the
+# asan folder inside the SRC_ROOT directory. A copy of the file is provided
+# with the Makefile. Also it now uses clang instead of gcc.
 
 # This makefile can be copied to a directory and it will generate the file
 # structure and initialize a git repository with the .init rule. Any variables
@@ -52,11 +56,27 @@ CREATE_LIB_TARGETS := 1
 # Compiler & Flags
 ################################################################################
 
-CC := gcc
+# Compiler
+CC := clang
 
+# Compiler flags
 CFLAGS := -Wall -Wextra -Werror -Wvla
+
+# Generic debug flags
 DFLAGS := -g
-SANITIZE := -fsanitize=address
+
+# Address sanitizing flags
+ASAN := -fsanitize=address -fsanitize-recover=address
+ASAN += -fno-omit-frame-pointer -fno-common
+ASAN += -fsanitize=pointer-subtract -fsanitize=pointer-compare
+# Technicaly UBSan but works with ASan
+ASAN += -fsanitize=undefined
+# Technicaly LSan but works with ASan
+ASAN += -fsanitize=leak
+# Thread sanitizing flags
+TSAN := -fsanitize=thread
+# Memory sanitizing flags
+MSAN := -fsanitize=memory -fsanitize-memory-track-origins
 
 ################################################################################
 # Root Folders
@@ -97,6 +117,11 @@ DEFAULT_LIB_RULES := all clean re
 # don't want.
 DEFAULT_LIB_RULES += fclean clean_all clean_dep
 DEFAULT_LIB_RULES += debug debug_re debug_asan debug_asan_re
+
+# All projects with a copy of this makefile v2.2 and up ate garanteed to work
+# with these targets. If you wish to not use them just comment the lines you
+# don't want.
+DEFAULT_LIB_RULES += debug_tsan debug_tsan_re debug_msan debug_msan_re
 
 ################################################################################
 # Content Folders
@@ -183,8 +208,8 @@ all: ${BINS}
 ${BIN_ROOT}${NAME1}: ${LIBFT} $$(call get_files,$${@F},$${OBJS_LIST})
 	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${@D} ${BLOCK}
-	${AT}${CC} ${CFLAGS} ${INCS} $(call get_files,${@F},${OBJS_LIST}) ${LIBS}\
-		-o $@ ${BLOCK}
+	${AT}${CC} ${CFLAGS} ${INCS} ${ASAN_FILE}\
+		$(call get_files,${@F},${OBJS_LIST}) ${LIBS} -o $@ ${BLOCK}
 
 ${LIBFT}: $$(call get_lib_target,$${DEFAULT_LIBS},all) ;
 
@@ -222,12 +247,27 @@ re: fclean all
 debug: CFLAGS += ${DFLAGS}
 debug: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
 
-debug_asan: CFLAGS += ${DFLAGS} ${SANITIZE}
-debug_asan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
+obj/asan/asan.o: src/asan/asan.c
+	${AT}mkdir -p ${@D} ${BLOCK}
+	${AT}${CC} -o $@ -c $< ${BLOCK}
+
+debug_asan: CFLAGS += ${DFLAGS} ${ASAN}
+debug_asan: ASAN_FILE = obj/asan/asan.o
+debug_asan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) obj/asan/asan.o all
+
+debug_tsan: CFLAGS += ${DFLAGS} ${TSAN}
+debug_tsan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
+
+debug_msan: CFLAGS += ${DFLAGS} ${MSAN}
+debug_msan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
 
 debug_re: fclean debug
 
 debug_asan_re: fclean debug_asan
+
+debug_tsan_re: fclean debug_tsan
+
+debug_msan_re: fclean debug_msan
 
 ################################################################################
 # Utility Targets
@@ -253,6 +293,9 @@ debug_asan_re: fclean debug_asan
 # Meta target to force a target to be executed
 .FORCE: ;
 
+# Print a specifique variable
+print-%: ; @echo $*=$($*)
+
 # List all the targets in alphabetical order
 targets:
 	${AT}${MAKE} LC_ALL=C -pRrq -f ${CURRENT_FILE} : 2>/dev/null\
@@ -269,7 +312,7 @@ targets:
 .PHONY: clean fclean clean_dep clean_all
 
 # Phony debug targets
-.PHONY: debug debug_re debug_asan debug_asan_re
+.PHONY: debug debug_re debug_asan debug_asan_re debug_tsan debug_tsan_re
 
 # Phony utility targets
 .PHONY: targets .FORCE
