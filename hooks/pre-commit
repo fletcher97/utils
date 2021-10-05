@@ -1,0 +1,20 @@
+#!/bin/sh
+
+echo "Testing compilation"
+ret=$(make compile-test)
+if $ret;
+then
+	echo "ERROR: Code must compile with no errors. Run \`make compile-test\` to see what's wrong."
+	exit 1
+fi
+
+echo "Testing norminette"
+test=$(norminette src inc | grep Error)
+if [ "$test" != "" ]
+then
+	echo "ERROR: Norminette failed. Run \`norminette src inc | grep Error` to see what's wrong."
+	exit 1
+fi
+
+echo "All OK"
+exit 1
