@@ -2,10 +2,15 @@
 # ZSH
 ################################################################################
 
+# Plugin
+plugins=(git alias-finder common-aliases git-flow z github)
+ZSH_ALIAS_FINDER_AUTOMATIC=true
+
 # Disable Bell
 unsetopt BEEP
 
 # Norminette aliases
+export PATH=$PATH:/home/fletcher/norminette/venv/bin
 # alias norm="~/norminette/.norm_env/bin/norminette"
 # alias norminette="~/norminette/.norm_env/bin/norminette"
 alias norm="norminette"
@@ -25,6 +30,12 @@ alias vgf="vg --log-file=vg_out.txt"
 
 # Visual Studio Code Alias
 alias vsc=code-insiders
+
+# Set editor
+EDITOR=nano
+
+# Set tabs
+tabs 4
 
 ################################################################################
 # NANO
