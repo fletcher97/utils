@@ -26,7 +26,8 @@ alias gws="gw -fsanitize=address"
 alias cls="clear"
 LESS="-FRXx4"
 unalias rm
-unalias man
+unalias help
+unalias run-help
 
 # Valgrind aliases
 alias vg="valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all \
