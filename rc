@@ -2,6 +2,13 @@
 # ZSH
 ################################################################################
 
+# ZSH Plugins
+plugins=(git z alias-finder)
+ZSH_ALIAS_FINDER_AUTOMATIC=true
+
+# Setting default editor to nano
+EDITOR=nano
+
 # Disable Bell
 unsetopt BEEP
 
@@ -41,3 +48,6 @@ set smooth
 
 # Tab size
 set tabzise 4
+
+# Set multi buffer
+set multibuffer
