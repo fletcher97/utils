@@ -54,7 +54,7 @@ set autoindent
 set smooth
 
 # Tab size
-set tabzise 4
+set tabsize 4
 
 # Set multi buffer
 set multibuffer
