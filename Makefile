@@ -16,7 +16,7 @@
 
 # This makefile can be copied to a directory and it will generate the file
 # structure and initialize a git repository with the .init rule. Any variables
-# and rules for the specifique project can be added in the appropriate section.
+# and rules for the specific project can be added in the appropriate section.
 
 # By default this makefile assumes that libft, 42's student made library, a copy
 # of which can be obtained by cloning https://github.com/fletcher97/libft.git,
