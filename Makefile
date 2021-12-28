@@ -287,7 +287,8 @@ debug_msan_re: fclean debug_msan
 	${AT}mkdir -p ${SRC_ROOT} ${BLOCK}
 	${AT}printf "\033[33m[INITIALIZING GIT REPOSITORY]\033[0m\n" ${BLOCK}
 	${AT}git init ${BLOCK}
-	${AT}echo "*.o\n*.d\n.vscode\na.out\n.DS_Store" > .gitignore ${BLOCK}
+	${AT}echo "*.o\n*.d\n.vscode\na.out\n.DS_Store\nbin/\n*.ignore"\
+		> .gitignore ${BLOCK}
 	${AT}date > $@ ${BLOCK}
 	${AT}printf "\033[33m[CREATING FIRST COMMIT]\033[0m\n" ${BLOCK}
 	${AT}git add .gitignore ${BLOCK}
