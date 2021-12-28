@@ -3,7 +3,7 @@
 ################################################################################
 
 # Plugin
-plugins=(git alias-finder common-aliases git-flow z github)
+plugins=(git alias-finder common-aliases git-flow z gh)
 ZSH_ALIAS_FINDER_AUTOMATIC=true
 
 # Disable Bell
