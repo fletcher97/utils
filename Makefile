@@ -3,8 +3,17 @@
 ################################################################################
 
 # Makefile by fletcher97
-# Version: 2.3
+# Version: 2.4
 # Repo: www.github.com/fletcher97/utils
+
+# v2.4: Added PEDANTIC variable on configs section. If set to true a lot of
+# warning flags will be added to use while compiling. By default this feature is
+# turned on. Setting the variable to anything else will disable extra warnings.
+# Turning it off will still compile with -Wall -Wextra -Werror.
+#
+# A LANG variable was aslo added to to specify what language the program is
+# using so as to be able to detect the extentions of the files (not implemented)
+# and enable more warnings.
 
 # v2.3: A rule to check if a program can be compiled was added in other to be
 # used for git hooks. A folder with hooks can be found in the same repository
@@ -57,6 +66,16 @@ VERBOSE := 1
 # creation of these targets by setting the bellow variable to 0.
 CREATE_LIB_TARGETS := 1
 
+# Pedantic allows for extra warning flags to be used while compiling. If set to
+# true these flags are applied. If set to anything else the flags will not be
+# used. By default it's turned on.
+PEDANTIC := true
+
+# Specify the language use by your program. This will allow to detect file
+# extentions automatically (not implemented). It also allows fo warnings to be
+# activated/deactivated based on the language used.
+LANG := C
+
 ################################################################################
 # Compiler & Flags
 ################################################################################
@@ -65,7 +84,27 @@ CREATE_LIB_TARGETS := 1
 CC := clang
 
 # Compiler flags
-CFLAGS := -Wall -Wextra -Werror -Wvla
+CFLAGS := -Wall -Wextra -Werror
+
+# Pedantic flags
+ifeq (${PEDANTIC},true)
+	CFLAGS += -Wpedantic -Werror=pedantic -pedantic-errors -Wcast-align
+	CFLAGS += -Wcast-qual -Wdisabled-optimization -Wformat=2 -Wuninitialized
+	CFLAGS += -Winit-self -Wmissing-include-dirs -Wredundant-decls -Wshadow
+	CFLAGS += -Wstrict-overflow=5 -Wundef -fdiagnostics-show-option
+	CFLAGS += -fstack-protector-all -fstack-clash-protection
+	ifeq (${CC},gcc)
+		CFLAGS += -Wformat-signedness -Wformat-truncation=2 -Wformat-overflow=2
+		CFLAGS += -Wlogical-op -Wstringop-overflow=4
+	endif
+	ifeq (${LANG},C++)
+		CFLAGS += -Wctor-dtor-privacy -Wold-style-cast -Woverloaded-virtual
+		CFLAGS += -Wsign-promo
+		ifeq (${CC},gcc)
+			CFLAGS += -Wstrict-null-sentinel -Wnoexcept
+		endif
+	endif
+endif
 
 # Generic debug flags
 DFLAGS := -g
