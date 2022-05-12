@@ -3,8 +3,13 @@
 ################################################################################
 
 # Makefile by fletcher97
-# Version: 2.4
+# Version: 3.0
 # Repo: www.github.com/fletcher97/utils
+
+# v3.0: Added support for multilanguage. Out of the box it accepts C and C++.
+# It is possible to specify the compiler family to be used (LLVM for
+# clang/clang++ and GNU for gcc/g++). Other compilers/languages can easily be
+# added assuming the compilation process is similar to C.
 
 # v2.4: Added PEDANTIC variable on configs section. If set to true a lot of
 # warning flags will be added to use while compiling. By default this feature is
@@ -76,15 +81,37 @@ PEDANTIC := true
 # activated/deactivated based on the language used.
 LANG := C
 
+# Specify the compiler to use. In conjuntion with the language it can pick the
+# right compiler and the right version of the compiler (i.e. gcc vs g++).
+# Supported option: LLVM, GNU
+COMPILER=LLVM
+
 ################################################################################
 # Compiler & Flags
 ################################################################################
 
 # Compiler
-CC := clang
+ifeq (${LANG},C)
+	ifeq (${COMPILER},LLVM)
+		CC := clang
+	endif
+	ifeq (${COMPILER},GNU)
+		CC := gcc
+	endif
+else ifeq (${LANG},C++)
+	ifeq (${COMPILER},LLVM)
+		CC := clang++
+	endif
+	ifeq (${COMPILER},GNU)
+		CC := g++
+	endif
+endif
 
 # Compiler flags
 CFLAGS := -Wall -Wextra -Werror
+ifeq (${LANG},C++)
+	CFLAGS += -std=c++98
+endif
 
 # Pedantic flags
 ifeq (${PEDANTIC},true)
@@ -93,14 +120,14 @@ ifeq (${PEDANTIC},true)
 	CFLAGS += -Winit-self -Wmissing-include-dirs -Wredundant-decls -Wshadow
 	CFLAGS += -Wstrict-overflow=5 -Wundef -fdiagnostics-show-option
 	CFLAGS += -fstack-protector-all -fstack-clash-protection
-	ifeq (${CC},gcc)
+	ifeq (${CC},GNU)
 		CFLAGS += -Wformat-signedness -Wformat-truncation=2 -Wformat-overflow=2
 		CFLAGS += -Wlogical-op -Wstringop-overflow=4
 	endif
 	ifeq (${LANG},C++)
 		CFLAGS += -Wctor-dtor-privacy -Wold-style-cast -Woverloaded-virtual
 		CFLAGS += -Wsign-promo
-		ifeq (${CC},gcc)
+		ifeq (${CC},GNU)
 			CFLAGS += -Wstrict-null-sentinel -Wnoexcept
 		endif
 	endif
@@ -196,13 +223,22 @@ INC_DIRS += ${INC_ROOT}
 # Files
 ################################################################################
 
-SRCS_LIST = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip $(foreach\
-	dir,$(subst :,${SPACE},${dl}),$(wildcard ${dir}*.c)))))
-OBJS_LIST = $(subst ${SRC_ROOT},${OBJ_ROOT},$(subst .c,.o,${SRCS_LIST}))
+ifeq (${LANG},C)
+	SRC_FILE_EXT := c
+	INC_FILE_EXT := h
+else ifeq (${LANG},C++)
+	SRC_FILE_EXT := cpp
+	INC_FILE_EXT := hpp
+endif
 
-SRCS = $(foreach dir,${SRC_DIRS},$(wildcard ${dir}*.c))
-OBJS = $(subst ${SRC_ROOT},${OBJ_ROOT},${SRCS:.c=.o})
-DEPS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRCS:.c=.d})
+SRCS_LIST = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip $(foreach\
+	dir,$(subst :,${SPACE},${dl}),$(wildcard ${dir}*.${SRC_FILE_EXT})))))
+OBJS_LIST = $(subst ${SRC_ROOT},${OBJ_ROOT},\
+	$(subst .${SRC_FILE_EXT},.o,${SRCS_LIST}))
+
+SRCS = $(foreach dir,${SRC_DIRS},$(wildcard ${dir}*.${SRC_FILE_EXT}))
+OBJS = $(subst ${SRC_ROOT},${OBJ_ROOT},${SRCS:.${SRC_FILE_EXT}=.o})
+DEPS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRCS:.${SRC_FILE_EXT}=.d})
 
 INCS := ${addprefix -I,${INC_DIRS}}
 
@@ -238,8 +274,8 @@ endif
 ################################################################################
 
 vpath %.o $(OBJ_ROOT)
-vpath %.h $(INC_ROOT)
-vpath %.c $(SRC_DIRS)
+vpath %.${INC_FILE_EXT} $(INC_ROOT)
+vpath %.${SRC_FILE_EXT} $(SRC_DIRS)
 vpath %.d $(DEP_DIRS)
 
 ################################################################################
@@ -444,12 +480,13 @@ $(call make_bin_def,$(notdir ${bin}),${bin})))
 endif
 
 $(foreach src,${SRCS},$(eval\
-$(call make_dep_def,$(subst ${SRC_ROOT},${DEP_ROOT},${src:.c=.d}),${src})))
+$(call make_dep_def,$(subst ${SRC_ROOT},${DEP_ROOT},\
+${src:.${SRC_FILE_EXT}=.d}),${src})))
 
 $(foreach src,${SRCS},$(eval\
-$(call make_obj_def,$(subst ${SRC_ROOT},${OBJ_ROOT},${src:.c=.o}),\
-${src},\
-$(subst ${SRC_ROOT},${DEP_ROOT},${src:.c=.d}))))
+$(call make_obj_def,$(subst ${SRC_ROOT},${OBJ_ROOT},\
+${src:.${SRC_FILE_EXT}=.o}),${src},\
+$(subst ${SRC_ROOT},${DEP_ROOT},${src:.${SRC_FILE_EXT}=.d}))))
 
 $(foreach lib,${DEFAULT_LIBS},$(foreach target,${DEFAULT_LIB_RULES},$(eval\
 $(call make_lib_def,${lib},${target}))))
