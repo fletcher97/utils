@@ -1,0 +1,42 @@
+################################################################################
+# NANORC
+################################################################################
+
+# Show line numbers
+set linenumbers
+
+# Auto-indentation
+set autoindent
+
+# Smooth scrolling
+set smooth
+
+# Tab size
+set tabsize 4
+
+# Set multi buffer
+set multibuffer
+
+# Vertical line at char 80
+# set guidestripe 80
+
+# History for undo
+set historylog
+
+# Scroll bar
+set indicator
+
+# Save position when closing file
+set positionlog
+
+set quickblank
+
+# Show state flags
+set stateflags
+
+# Quick delete
+set zap
+
+include /usr/local/share/nano/c.nanorc
+
+extendsyntax c linter gcc -fsyntax-only
