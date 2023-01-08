@@ -3,8 +3,15 @@
 ################################################################################
 
 # Makefile by fletcher97
-# Version: 3.0
+# Version: 3.1
 # Repo: www.github.com/fletcher97/utils
+
+# v3.1: Added debug coverage rules and fixed minor bugs. This Makefile can now
+# compile binaries to produce coverage profile files in order to be used with
+# gcov. Intermediary files are placed in the OBJ folder. After executing the
+# programyou you can run gcov to generate the coverage reports. Alteratively the
+# target cov can be used to do that. All generated files will be moved to a gcov
+# folder.
 
 # v3.0: Added support for multilanguage. Out of the box it accepts C and C++.
 # It is possible to specify the compiler family to be used (LLVM for
