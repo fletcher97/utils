@@ -120,14 +120,14 @@ ifeq (${PEDANTIC},true)
 	CFLAGS += -Winit-self -Wmissing-include-dirs -Wredundant-decls -Wshadow
 	CFLAGS += -Wstrict-overflow=5 -Wundef -fdiagnostics-show-option
 	CFLAGS += -fstack-protector-all -fstack-clash-protection
-	ifeq (${CC},GNU)
+	ifeq (${COMPILER},GNU)
 		CFLAGS += -Wformat-signedness -Wformat-truncation=2 -Wformat-overflow=2
 		CFLAGS += -Wlogical-op -Wstringop-overflow=4
 	endif
 	ifeq (${LANG},C++)
 		CFLAGS += -Wctor-dtor-privacy -Wold-style-cast -Woverloaded-virtual
 		CFLAGS += -Wsign-promo
-		ifeq (${CC},GNU)
+		ifeq (${COMPILER},GNU)
 			CFLAGS += -Wstrict-null-sentinel -Wnoexcept
 		endif
 	endif
