@@ -303,10 +303,7 @@ clean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@)
 	${AT}mkdir -p ${OBJ_ROOT} ${BLOCK}
 	${AT}find ${OBJ_ROOT} -type f -name "*.o" -delete ${BLOCK}
 
-fclean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@)
-	${AT}printf "\033[38;5;1m[REMOVING OBJECTS]\033[0m\n" ${BLOCK}
-	${AT}mkdir -p ${OBJ_ROOT} ${BLOCK}
-	${AT}find ${OBJ_ROOT} -type f -name "*.o" -delete ${BLOCK}
+fclean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) clean
 	${AT}printf "\033[38;5;1m[REMOVING BINARIES]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${BIN_ROOT} ${BLOCK}
 	${AT}find ${BIN_ROOT} -type f\
