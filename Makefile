@@ -316,7 +316,7 @@ clean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@)
 	${AT}printf "\033[38;5;1m[REMOVING COVERAGE]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${OBJ_ROOT} ${BLOCK}
 	${AT}find ${OBJ_ROOT} -type f\
-		-name "*.gcda" -o -name "*.gcno" -delete ${BLOCK}
+		-name "*.gcda" -delete -o -name "*.gcno" -delete ${BLOCK}
 	${AT}find ${COV_ROOT} -type f -name "*.gcov" -delete ${BLOCK}
 
 fclean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) clean
