@@ -345,9 +345,9 @@ debug_cov: CFLAGS += ${COVFLAGS}
 debug_cov: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
 
 cov: debug_cov
-	${AT}mkdir -p gcov ${BLOCK}
+	${AT}mkdir -p ${COV_ROOT} ${BLOCK}
 	${AT}gcov -arHs src obj/*.gc* ${BLOCK}
-	${AT}mv *.gcov gcov ${BLOCK}
+	${AT}mv *.gcov ${COV_ROOT} ${BLOCK}
 
 obj/asan/asan.o: src/asan/asan.c
 	${AT}mkdir -p ${@D} ${BLOCK}
