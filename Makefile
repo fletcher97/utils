@@ -176,6 +176,8 @@ COV_ROOT := cov/
 # Libraries
 ################################################################################
 
+ifeq (${CREATE_LIB_TARGETS},0)
+
 # Libft
 LIBFT_ROOT := ${LIB_ROOT}libft/
 LIBFT_INC := ${LIBFT_ROOT}inc/
@@ -205,6 +207,8 @@ DEFAULT_LIB_RULES += debug debug_re debug_asan debug_asan_re
 # with these targets. If you wish to not use them just comment the lines you
 # don't want.
 DEFAULT_LIB_RULES += debug_tsan debug_tsan_re debug_msan debug_msan_re
+
+endif
 
 ################################################################################
 # Content Folders
@@ -275,10 +279,6 @@ else ifeq ($(VERBOSE),2)
 	AT := @
 else ifeq ($(VERBOSE),4)
 	MAKEFLAGS += --debug=v
-endif
-
-ifeq (${CREATE_LIB_TARGETS},0)
-	undefine DEFAULT_LIBS
 endif
 
 ################################################################################
