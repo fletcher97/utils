@@ -76,7 +76,7 @@ VERBOSE := 1
 # in others. If for example you just want to clean the root directory the clean
 # rule will be executed in any other makefile specified. You can deactivate the
 # creation of these targets by setting the bellow variable to 0.
-CREATE_LIB_TARGETS := 1
+CREATE_LIB_TARGETS := 0
 
 # Pedantic allows for extra warning flags to be used while compiling. If set to
 # true these flags are applied. If set to anything else the flags will not be
