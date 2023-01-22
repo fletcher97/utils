@@ -178,7 +178,7 @@ COV_ROOT := cov/
 # Libraries
 ################################################################################
 
-ifeq (${CREATE_LIB_TARGETS},0)
+ifeq (${CREATE_LIB_TARGETS},1)
 
 # Libft
 LIBFT_ROOT := ${LIB_ROOT}libft/
