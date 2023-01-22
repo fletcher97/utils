@@ -3,8 +3,14 @@
 ################################################################################
 
 # Makefile by fletcher97
-# Version: 3.1
+# Version: 4
 # Repo: www.github.com/fletcher97/utils
+
+# v4: Added templates and implementations folders. You can now specify folders
+# with template and implementation files to be added to includes. The default
+# for lib creation was changed to 0 and the undefine removed so that the library
+# related variables are only created if necessary. Also fixed some small bugs
+# due to using wrong variables.
 
 # v3.1: Added debug coverage rules and fixed minor bugs. This Makefile can now
 # compile binaries to produce coverage profile files in order to be used with
