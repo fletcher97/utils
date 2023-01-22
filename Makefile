@@ -167,6 +167,8 @@ MSAN := -fsanitize=memory -fsanitize-memory-track-origins
 BIN_ROOT := bin/
 DEP_ROOT := dep/
 INC_ROOT := inc/
+TPL_ROOT := ${INC_ROOT}tpl/
+IMP_ROOT := ${INC_ROOT}imp/
 LIB_ROOT := lib/
 OBJ_ROOT := obj/
 SRC_ROOT := src/
@@ -235,6 +237,13 @@ DEP_DIRS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRC_DIRS})
 # can be specified here.
 INC_DIRS += ${INC_ROOT}
 
+# List of folders with templates and their implementations. Each folder needs to
+# end with a '/'. The path to the folders is relative to the root of the makefile.
+ifeq (${LANG},C++)
+	TPL_DIRS := ${TPL_ROOT}
+	IMP_DIRS := ${IMP_ROOT}
+endif
+
 ################################################################################
 # Files
 ################################################################################
@@ -245,6 +254,8 @@ ifeq (${LANG},C)
 else ifeq (${LANG},C++)
 	SRC_FILE_EXT := cpp
 	INC_FILE_EXT := hpp
+	TPL_FILE_EXT := tpp
+	IMP_FILE_EXT := ipp
 endif
 
 SRCS_LIST = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip $(foreach\
@@ -257,6 +268,8 @@ OBJS = $(subst ${SRC_ROOT},${OBJ_ROOT},${SRCS:.${SRC_FILE_EXT}=.o})
 DEPS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRCS:.${SRC_FILE_EXT}=.d})
 
 INCS := ${addprefix -I,${INC_DIRS}}
+INCS += ${addprefix -I,${TPL_DIRS}}
+INCS += ${addprefix -I,${IMP_DIRS}}
 
 BINS := ${addprefix ${BIN_ROOT},${NAMES}}
 
