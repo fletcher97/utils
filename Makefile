@@ -3,8 +3,13 @@
 ################################################################################
 
 # Makefile by fletcher97
-# Version: 4
+# Version: 4.1
 # Repo: www.github.com/fletcher97/utils
+
+# v4.1: Adde debug variable to specify what debug lvl the code should be
+# compiled with. If the code is prepared to compile with this flag, it's
+# behaviour should change depending on the level set. Setting this option with
+# code that is not written with this in mind should not be affected.
 
 # v4: Added templates and implementations folders. You can now specify folders
 # with template and implementation files to be added to includes. The default
@@ -75,6 +80,14 @@ NAMES := ${NAME1}
 # If no value is specified or an incorrect value is given make will print each
 # command like if VERBOSE was set to 3.
 VERBOSE := 1
+
+# Debug level. This variable controls what the DEBUG macro the code will be
+# compiled with is set to.
+# none: undefine DEBUG macro
+# trace/debug/info/warn/error/critical: set DEBUG macro to the given level
+#
+# By default debug is none.
+DEBUG_LVL := none
 
 # Version 2.1 and above of this makefile can generate targets to use other
 # makefiles as dependencies. This feature will execute the rule of same name in
@@ -149,6 +162,23 @@ endif
 
 # Generic debug flags
 DFLAGS := -g
+
+# Debug lvl flag
+ifeq (${DEBUG_LVL}, none)
+	CFLAGS += -UDEBUG_LVL
+else ifeq (${DEBUG_LVL}, trace)
+	CFLAGS += -DDEBUG_LVL=TRACE
+else ifeq (${DEBUG_LVL}, debug)
+	CFLAGS += -DDEBUG_LVL=DEBUG
+else ifeq (${DEBUG_LVL}, info)
+	CFLAGS += -DDEBUG_LVL=INFO
+else ifeq (${DEBUG_LVL}, warn)
+	CFLAGS += -DDEBUG_LVL=WARN
+else ifeq (${DEBUG_LVL}, error)
+	CFLAGS += -DDEBUG_LVL=ERROR
+else ifeq (${DEBUG_LVL}, fatal)
+	CFLAGS += -DDEBUG_LVL=FATAL
+endif
 
 # Coverage flags
 COVFLAGS = -fprofile-arcs -ftest-coverage
