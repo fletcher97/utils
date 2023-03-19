@@ -254,8 +254,8 @@ endif
 
 # Lists of ':' separated folders inside SRC_ROOT containing source files. Each
 # folder needs to end with a '/'. The path to the folders is relative to
-# SRC_ROOTIf SRC_ROOT contains files './' needs to be in the list. Each list is
-# separated by a space or by going to a new line and adding onto the var.
+# SRC_ROOT. If SRC_ROOT contains files './' needs to be in the list. Each list
+# is separated by a space or by going to a new line and adding onto the var.
 # Exemple:
 # DIRS := folder1/:folder2/
 # DIRS += folder1/:folder3/:folder4/
