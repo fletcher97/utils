@@ -3,8 +3,15 @@
 ################################################################################
 
 # Makefile by fletcher97
-# Version: 4.1
+# Version: 5
 # Repo: www.github.com/fletcher97/utils
+
+# v5: Added testing capabilities to the makefile. You can now places Tests in
+# TST_ROOT or a subfolder and treat it the same as you would SRC_ROOT. For each
+# executable a test executable is now generated. It will use the TST_DIRS that
+# have the same index as SRC_DIRS to test them. An important change is that main
+# functions should now be specified in a different variable. A merge function
+# was also added to aide in the parsing of the required files for tests.
 
 # v4.1: Adde debug variable to specify what debug lvl the code should be
 # compiled with. If the code is prepared to compile with this flag, it's
@@ -525,6 +532,7 @@ targets:
 
 compile-test: CFLAGS += -DDEBUG_LVL=TRACE
 compile-test: ${addprefix compile-test/,${NAMES}}
+compile-test: ${addprefix compile-test/${TEST_PREFIX},${NAMES}}
 
 ################################################################################
 # .PHONY
@@ -620,6 +628,13 @@ compile-test/${1}: .FORCE
 		$$(call get_files,$${@F},$${SRCS_LIST}) $${BLOCK}
 endef
 
+define make_compile_test_test_def
+compile-test/${1}: .FORCE
+	$${AT}printf "\033[33m[TESTING $${@F}]\033[0m\n" $${BLOCK}
+	$${AT}$${CC} $${CFLAGS} -fsyntax-only $${INCS} $${ASAN_FILE}\
+		$$(call get_files_tests,$${@F},$${TSTS_LIST}) $${BLOCK}
+endef
+
 ################################################################################
 # Target Generator
 ################################################################################
@@ -648,6 +663,9 @@ $(call make_lib_def,${lib},${target}))))
 
 $(foreach name,$(NAMES),$(eval\
 $(call make_compile_test_def,${name})))
+
+$(foreach name,$(NAMES),$(eval\
+$(call make_compile_test_test_def,${TEST_PREFIX}${name})))
 
 ################################################################################
 # Includes
