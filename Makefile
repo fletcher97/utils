@@ -510,6 +510,12 @@ get_files = $(subst :,${SPACE},$(call lookup,$1,${NAMES},$2))
 # Get default target for libs given a rule
 get_lib_target = $(foreach lib,$1,${lib}/$2)
 
+# Merge 2 lists concatenating element by element
+_merge = $(foreach el,$1,$(if $(call lookup,${el},$1,$2),\
+	$(addprefix ${el},:$(call lookup,${el},$1,$2)), ${el}))
+merge = $(intcmp $(words $1),$(words $2),$(call _merge,$2,$1),\
+	$(call _merge,$1,$2))
+
 ################################################################################
 # Target Templates
 ################################################################################
