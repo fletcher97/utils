@@ -363,6 +363,7 @@ INCS += ${addprefix -I,${TPL_DIRS}}
 INCS += ${addprefix -I,${IMP_DIRS}}
 
 BINS := ${addprefix ${BIN_ROOT},${NAMES}}
+TESTS := ${addprefix ${BIN_ROOT}${TEST_PREFIX},${NAMES}}
 
 ################################################################################
 # Conditions
@@ -399,6 +400,7 @@ vpath %.d $(DEP_DIRS)
 ################################################################################
 
 all: ${BINS}
+tests: ${TESTS}
 
 .SECONDEXPANSION:
 ${BIN_ROOT}${NAME1}: ${LIBFT} $$(call get_files,$${@F},$${OBJS_LIST})
@@ -406,6 +408,12 @@ ${BIN_ROOT}${NAME1}: ${LIBFT} $$(call get_files,$${@F},$${OBJS_LIST})
 	${AT}mkdir -p ${@D} ${BLOCK}
 	${AT}${CC} ${CFLAGS} ${INCS} ${ASAN_FILE}\
 		$(call get_files,${@F},${OBJS_LIST}) ${LIBS} -o $@ ${BLOCK}
+
+${BIN_ROOT}${TEST_PREFIX}${NAME1}: ${LIBFT} $$(call get_files_tests,$${@F},$${OBJS_LIST_TEST})
+	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
+	${AT}mkdir -p ${@D} ${BLOCK}
+	${AT}${CC} ${CFLAGS} ${INCS} ${ASAN_FILE}\
+		$(call get_files_tests,${@F},${OBJS_LIST_TEST}) ${LIBS} -o $@ ${BLOCK}
 
 ${LIBFT}: $$(call get_lib_target,$${DEFAULT_LIBS},all) ;
 
@@ -618,6 +626,11 @@ endef
 
 ifneq (${BIN_ROOT},./)
 $(foreach bin,${BINS},$(eval\
+$(call make_bin_def,$(notdir ${bin}),${bin})))
+endif
+
+ifneq (${BIN_ROOT},./)
+$(foreach bin,${TESTS},$(eval\
 $(call make_bin_def,$(notdir ${bin}),${bin})))
 endif
 
