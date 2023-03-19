@@ -461,6 +461,7 @@ targets:
 			{if ($$1 ~ "# makefile") {print $$2}}'\
 		| sort
 
+compile-test: CFLAGS += -DDEBUG_LVL=TRACE
 compile-test: ${addprefix compile-test/,${NAMES}}
 
 ################################################################################
