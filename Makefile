@@ -507,6 +507,8 @@ rmdup = $(if $1,$(firstword $1) $(call rmdup,$(filter-out $(firstword $1),$1)))
 
 # Get files for a specific binary
 get_files = $(subst :,${SPACE},$(call lookup,$1,${NAMES},$2))
+get_files_tests = $(subst :,${SPACE},\
+	$(call lookup,$1,$(addprefix ${TEST_PREFIX},${NAMES}),$2))
 
 # Get default target for libs given a rule
 get_lib_target = $(foreach lib,$1,${lib}/$2)
