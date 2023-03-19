@@ -281,9 +281,18 @@ DIRS_TEST := ./
 SRC_DIRS_LIST := $(addprefix ${SRC_ROOT},${DIRS})
 SRC_DIRS_LIST := $(foreach dl,${SRC_DIRS_LIST},$(subst :,:${SRC_ROOT},${dl}))
 
+TST_DIRS_LIST := $(addprefix ${TST_ROOT},${DIRS_TEST})
+TST_DIRS_LIST := $(foreach dl,${TST_DIRS_LIST},$(subst :,:${TST_ROOT},${dl}))
+
 SRC_DIRS = $(call rmdup,$(subst :,${SPACE},${SRC_DIRS_LIST}))
-OBJ_DIRS = $(subst ${SRC_ROOT},${OBJ_ROOT},${SRC_DIRS})
-DEP_DIRS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRC_DIRS})
+
+TST_DIRS = $(call rmdup,$(subst :,${SPACE},${TST_DIRS_LIST}))
+
+OBJ_DIRS := $(addprefix ${OBJ_ROOT},${SRC_DIRS})
+OBJ_DIRS += $(addprefix ${OBJ_ROOT},${TST_DIRS})
+
+DEP_DIRS := $(addprefix ${DEP_ROOT},${SRC_DIRS})
+DEP_DIRS += $(addprefix ${DEP_ROOT},${TST_DIRS})
 
 # List of folders with header files.Each folder needs to end with a '/'. The
 # path to the folders is relative to the root of the makefile. Library includes
@@ -363,7 +372,7 @@ endif
 
 vpath %.o $(OBJ_ROOT)
 vpath %.${INC_FILE_EXT} $(INC_ROOT)
-vpath %.${SRC_FILE_EXT} $(SRC_DIRS)
+vpath %.${SRC_FILE_EXT} $(SRC_DIRS) $(TST_DIRS)
 vpath %.d $(DEP_DIRS)
 
 ################################################################################
@@ -594,13 +603,13 @@ $(call make_bin_def,$(notdir ${bin}),${bin})))
 endif
 
 $(foreach src,${SRCS},$(eval\
-$(call make_dep_def,$(subst ${SRC_ROOT},${DEP_ROOT},\
+$(call make_dep_def,$(addprefix ${DEP_ROOT},\
 ${src:.${SRC_FILE_EXT}=.d}),${src})))
 
 $(foreach src,${SRCS},$(eval\
-$(call make_obj_def,$(subst ${SRC_ROOT},${OBJ_ROOT},\
+$(call make_obj_def,$(addprefix ${OBJ_ROOT},\
 ${src:.${SRC_FILE_EXT}=.o}),${src},\
-$(subst ${SRC_ROOT},${DEP_ROOT},${src:.${SRC_FILE_EXT}=.d}))))
+$(addprefix ${DEP_ROOT},${src:.${SRC_FILE_EXT}=.d}))))
 
 $(foreach lib,${DEFAULT_LIBS},$(foreach target,${DEFAULT_LIB_RULES},$(eval\
 $(call make_lib_def,${lib},${target}))))
