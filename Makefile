@@ -212,6 +212,7 @@ LIB_ROOT := lib/
 OBJ_ROOT := obj/
 SRC_ROOT := src/
 COV_ROOT := cov/
+TST_ROOT := tst/
 
 ################################################################################
 # Libraries
@@ -437,6 +438,7 @@ debug_msan_re: fclean debug_msan
 	${AT}mkdir -p ${OBJ_ROOT} ${BLOCK}
 	${AT}mkdir -p ${SRC_ROOT} ${BLOCK}
 	${AT}mkdir -p ${COV_ROOT} ${BLOCK}
+	${AT}mkdir -p ${TST_ROOT} ${BLOCK}
 	${AT}printf "\033[33m[INITIALIZING GIT REPOSITORY]\033[0m\n" ${BLOCK}
 	${AT}git init ${BLOCK}
 	${AT}echo -en ".DS_Store\na.out\n*.o"\
