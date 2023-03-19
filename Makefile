@@ -274,7 +274,8 @@ DEP_DIRS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRC_DIRS})
 INC_DIRS += ${INC_ROOT}
 
 # List of folders with templates and their implementations. Each folder needs to
-# end with a '/'. The path to the folders is relative to the root of the makefile.
+# end with a '/'. The path to the folders is relative to the root of the
+# makefile.
 ifeq (${LANG},C++)
 	TPL_DIRS := ${TPL_ROOT}
 	IMP_DIRS := ${IMP_ROOT}
