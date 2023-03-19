@@ -89,6 +89,9 @@ VERBOSE := 1
 # By default debug is none.
 DEBUG_LVL := none
 
+# Name prefix for test executable
+TEST_PREFIX := test_
+
 # Version 2.1 and above of this makefile can generate targets to use other
 # makefiles as dependencies. This feature will execute the rule of same name in
 # an other makefile. This can be usefull in many situation but also a hinderence
