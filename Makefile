@@ -260,10 +260,23 @@ endif
 # folder needs to end with a '/'. The path to the folders is relative to
 # SRC_ROOT. If SRC_ROOT contains files './' needs to be in the list. Each list
 # is separated by a space or by going to a new line and adding onto the var.
+#
+# IMPORTANT: If you wish to use testing, DO NOT place any folders with files
+# containing a main function in this list. The main file(s) should be be
+# isolated in a separate folder (you can place it alone in SRC_ROOT and all src
+# files in their own subfolder). The main file should be place in the FILES_MAIN
+# list.
+#
 # Exemple:
 # DIRS := folder1/:folder2/
 # DIRS += folder1/:folder3/:folder4/
 DIRS := ./
+
+# List of directories with tests. Formating follows the same rules as DIRS
+# above. All folders are relative to TST_ROOT. Each group of folder should only
+# contain tests for the equivalent executable. The first group will test the
+# files in the first group of DIRS (or the first executable specified in NAMES).
+DIRS_TEST := ./
 
 SRC_DIRS_LIST := $(addprefix ${SRC_ROOT},${DIRS})
 SRC_DIRS_LIST := $(foreach dl,${SRC_DIRS_LIST},$(subst :,:${SRC_ROOT},${dl}))
@@ -298,6 +311,15 @@ else ifeq (${LANG},C++)
 	TPL_FILE_EXT := tpp
 	IMP_FILE_EXT := ipp
 endif
+
+# List of src files containing the main function. This list should contain one
+# entry per executable. All files are relative to SRC_ROOT
+# Exemple:
+MAIN_FILES := ${SRC_ROOT}main.${SRC_FILE_EXT}
+# List of src files containing the main function for testing. This list should
+# contain one entry per executable. All files are relative to SRC_ROOT
+# Exemple:
+MAIN_FILES_TEST := ${TST_ROOT}main.${SRC_FILE_EXT}
 
 SRCS_LIST = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip $(foreach\
 	dir,$(subst :,${SPACE},${dl}),$(wildcard ${dir}*.${SRC_FILE_EXT})))))
