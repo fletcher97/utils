@@ -330,14 +330,33 @@ MAIN_FILES := ${SRC_ROOT}main.${SRC_FILE_EXT}
 # Exemple:
 MAIN_FILES_TEST := ${TST_ROOT}main.${SRC_FILE_EXT}
 
-SRCS_LIST = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip $(foreach\
-	dir,$(subst :,${SPACE},${dl}),$(wildcard ${dir}*.${SRC_FILE_EXT})))))
-OBJS_LIST = $(subst ${SRC_ROOT},${OBJ_ROOT},\
-	$(subst .${SRC_FILE_EXT},.o,${SRCS_LIST}))
+# Source files grouped by executable
+SRCS_LIST_SIMPLE = $(foreach dl,${SRC_DIRS_LIST},$(subst ${SPACE},:,$(strip\
+	$(foreach dir,$(subst :,${SPACE},${dl}),\
+	$(wildcard ${dir}*.${SRC_FILE_EXT})))))
+SRCS_LIST = $(call merge,${SRCS_LIST_SIMPLE},${MAIN_FILES})
 
-SRCS = $(foreach dir,${SRC_DIRS},$(wildcard ${dir}*.${SRC_FILE_EXT}))
-OBJS = $(subst ${SRC_ROOT},${OBJ_ROOT},${SRCS:.${SRC_FILE_EXT}=.o})
-DEPS = $(subst ${SRC_ROOT},${DEP_ROOT},${SRCS:.${SRC_FILE_EXT}=.d})
+# Test files grouped by executable
+TSTS_LIST_SIMPLE := $(foreach dl,${TST_DIRS_LIST},$(subst ${SPACE},:,$(strip\
+	$(foreach dir,$(subst :,${SPACE},${dl}),\
+	$(wildcard ${dir}*.${SRC_FILE_EXT})))))
+TSTS_LIST = $(call merge,$(call merge,${SRCS_LIST_SIMPLE},${TSTS_LIST_SIMPLE}),\
+	${MAIN_FILES_TEST})
+
+# Object files grouped by executable
+OBJS_LIST = $(subst :,:${OBJ_ROOT},$(addprefix ${OBJ_ROOT},\
+	$(subst .${SRC_FILE_EXT},.o,${SRCS_LIST})))
+
+# Test object files grouped by executable
+OBJS_LIST_TEST = $(subst :,:${OBJ_ROOT},$(addprefix ${OBJ_ROOT},\
+	$(subst .${SRC_FILE_EXT},.o,${TSTS_LIST})))
+
+# All source/dependancy files
+SRCS_SUM = $(foreach dir,${SRC_DIRS},$(wildcard ${dir}*.${SRC_FILE_EXT}))
+SRCS_SUM += $(foreach dir,${TST_DIRS},$(wildcard ${dir}*.${SRC_FILE_EXT}))
+SRCS_SUM += ${MAIN_FILES} ${MAIN_FILES_TEST}
+SRCS = $(call rmdup,${SRCS_SUM})
+DEPS = $(addprefix ${DEP_ROOT},${SRCS:.${SRC_FILE_EXT}=.d})
 
 INCS := ${addprefix -I,${INC_DIRS}}
 INCS += ${addprefix -I,${TPL_DIRS}}
