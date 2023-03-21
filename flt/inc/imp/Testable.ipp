@@ -1,6 +1,8 @@
 #if !defined(TESTABLE_IPP)
 #define TESTABLE_IPP
 
+#include "AssertError.hpp"
+
 #include "Testable.tpp"
 #include "TestCollection.hpp"
 
@@ -12,8 +14,14 @@ flt::Testable<T>::Testable(const std::string name) : _name(name){
 template<typename T>
 void
 flt::Testable<T>::run(void) {
-	for(typename std::vector<void (T::*)(void)>::iterator it = this->tests.begin(); it != this->tests.end(); it++)
-		(dynamic_cast<T*>(this)->*(*it))();
+	for(typename std::vector<void (T::*)(void)>::iterator it = this->tests.begin(); it != this->tests.end(); it++) {
+		try {
+			(dynamic_cast<T*>(this)->*(*it))();
+			this->_batch.pass();
+		} catch (AssertError e) {
+			this->_batch.error(e);
+		}
+	}
 }
 
 template<typename T>

@@ -4,33 +4,23 @@
 #include <string>
 #include <list>
 
+#include "AssertError.hpp"
+
 namespace flt
 {
 
 class TestResults
 {
 private:
-	class Result {
-	private:
-		unsigned long _line;
-		std::string _file;
-		std::string _func;
-		std::string _code;
-	public:
-		explicit Result(unsigned long line, const std::string& file,
-			const std::string& func, const std::string& code);
-		void report(std::ostream& out) const;
-	};
-
-private:
-	std::list<Result> _results;
+	std::list<AssertError> _errors;
 public:
 	unsigned long _good;
 public:
 	TestResults(void) : _good(0) {};
-	void error(unsigned long line, const std::string& file,
-		const std::string& func, const std::string& code);
+
+	void error(flt::AssertError& e);
 	void report(std::ostream& out, const std::string& name) const;
+	void pass(void);
 };
 
 } // namespace flt
