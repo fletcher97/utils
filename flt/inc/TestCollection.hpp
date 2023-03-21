@@ -4,7 +4,7 @@
 #include <list>
 #include <ostream>
 
-#include "Testable.tpp"
+#include "ITestable.hpp"
 
 #define ADD_TEST(X) X x##X;
 

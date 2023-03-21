@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "Testable.tpp"
 #include "TestCollection.hpp"
 
 flt::TestCollection::TestCollection() {}
