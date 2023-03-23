@@ -20,7 +20,12 @@
 		X;\
 		throw flt::AssertError(__LINE__, __FILE__, __func__, "Throw check failed: "#X" didn't throw");\
 	}catch(E e){} catch (...){\
-		throw flt::AssertError(__LINE__, __FILE__, __func__, "Throw check failed: "#X" didn't trhow the expected "#E" type");}}
+		throw flt::AssertError(__LINE__, __FILE__, __func__, "Throw check failed: "#X" didn't throw the expected "#E" type");}}
+
+#define ASSERT_NOTHROW(X) {try{\
+		X;\
+	} catch (...){\
+		throw flt::AssertError(__LINE__, __FILE__, __func__, "NoThrow check failed: "#X" threw unexpectedly");}}
 
 namespace flt
 {

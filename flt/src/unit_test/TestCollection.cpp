@@ -26,7 +26,7 @@ flt::TestCollection::test(void) {
 
 void
 flt::TestCollection::report(std::ostream& out) const {
-	std::cout << "Ran " << this->_count << " tests." << std::endl;
+	std::cout << "Ran " << this->_count << " groups." << std::endl;
 	for (std::list<flt::ITestable*>::const_iterator it = this->_tests.begin(); it != this->_tests.end(); it++) {
 		(*it)->report(out);
 	}
