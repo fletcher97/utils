@@ -33,7 +33,7 @@ namespace flt
 #define LOG_ERROR(msg)
 #define LOG_FATAL(msg)
 
-#if defined(DEBUG_LVL)
+#if defined(LOG_LVL)
 
 	#undef LOG_OPEN_FILE
 	#define LOG_OPEN_FILE(path) flt::Log::openFile(path);
@@ -41,37 +41,37 @@ namespace flt
 	#undef LOG_CLOSE_FILE
 	#define LOG_CLOSE_FILE(path) flt::Log::closeFile(path);
 
-	#if (DEBUG_LVL <= TRACE)
+	#if (LOG_LVL <= TRACE)
 		#undef LOG_TRACE
 		#define LOG_TRACE(msg) {std::stringstream ss; ss<<msg; flt::Log::trace(ss);}
 	#endif // TRACE lvl
 
-	#if (DEBUG_LVL <= DEBUG)
+	#if (LOG_LVL <= DEBUG)
 		#undef LOG_DEBUG
 		#define LOG_DEBUG(msg) {std::stringstream ss; ss<<msg; flt::Log::debug(ss);}
 	#endif // DEBUG lvl
 
-	#if (DEBUG_LVL <= INFO)
+	#if (LOG_LVL <= INFO)
 		#undef LOG_INFO
 		#define LOG_INFO(msg) {std::stringstream ss; ss<<msg; flt::Log::info(ss);}
 	#endif // INFO lvl
 
-	#if (DEBUG_LVL <= WARN)
+	#if (LOG_LVL <= WARN)
 		#undef LOG_WARN
 		#define LOG_WARN(msg) {std::stringstream ss; ss<<msg; flt::Log::warn(ss);}
 	#endif // WARN lvl
 
-	#if (DEBUG_LVL <= ERROR)
+	#if (LOG_LVL <= ERROR)
 		#undef LOG_ERROR
 		#define LOG_ERROR(msg) {std::stringstream ss; ss<<msg; flt::Log::error(ss);}
 	#endif // ERROR lvl
 
-	#if (DEBUG_LVL <= FATAL)
+	#if (LOG_LVL <= FATAL)
 		#undef LOG_FATAL
 		#define LOG_FATAL(msg) {std::stringstream ss; ss<<msg; flt::Log::fatal(ss);}
 	#endif // FATAL lvl
 
-#endif // DEBUG_LVL
+#endif // LOG_LVL
 
 class Log
 {
