@@ -179,17 +179,17 @@ DFLAGS := -g
 ifeq (${LOG_LVL}, none)
 	CFLAGS += -ULOG_LVL
 else ifeq (${LOG_LVL}, trace)
-	CFLAGS += -DLOG_LVL=TRACE
+	CFLAGS += -DLOG_LVL=FLT_LOG_TRACE_LVL
 else ifeq (${LOG_LVL}, debug)
-	CFLAGS += -DLOG_LVL=DEBUG
+	CFLAGS += -DLOG_LVL=FLT_LOG_DEBUG_LVL
 else ifeq (${LOG_LVL}, info)
-	CFLAGS += -DLOG_LVL=INFO
+	CFLAGS += -DLOG_LVL=FLT_LOG_INFO_LVL
 else ifeq (${LOG_LVL}, warn)
-	CFLAGS += -DLOG_LVL=WARN
+	CFLAGS += -DLOG_LVL=FLT_LOG_WARN_LVL
 else ifeq (${LOG_LVL}, error)
-	CFLAGS += -DLOG_LVL=ERROR
+	CFLAGS += -DLOG_LVL=FLT_LOG_ERROR_LVL
 else ifeq (${LOG_LVL}, fatal)
-	CFLAGS += -DLOG_LVL=FATAL
+	CFLAGS += -DLOG_LVL=FLT_LOG_FATAL_LVL
 endif
 
 # Coverage flags
@@ -529,7 +529,7 @@ targets:
 			{if ($$1 ~ "# makefile") {print $$2}}'\
 		| sort
 
-compile-test: CFLAGS += -DLOG_LVL=TRACE
+compile-test: CFLAGS += -DLOG_LVL=FLT_LOG_TRACE_LVL
 compile-test: ${addprefix compile-test/,${NAMES}}
 compile-test: ${addprefix compile-test/${TEST_PREFIX},${NAMES}}
 
