@@ -10,7 +10,7 @@ flt::AssertError::AssertError(unsigned long line, const std::string& file,
 	this->_func = func;
 }
 
-flt::AssertError::~AssertError() throw() {}
+flt::AssertError::~AssertError(void) throw() {}
 
 void
 flt::AssertError::report(std::ostream& out) const {

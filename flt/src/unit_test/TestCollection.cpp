@@ -2,8 +2,8 @@
 
 #include "TestCollection.hpp"
 
-flt::TestCollection::TestCollection() {}
-flt::TestCollection::~TestCollection() {}
+flt::TestCollection::TestCollection(void) {}
+flt::TestCollection::~TestCollection(void) {}
 
 flt::TestCollection&
 flt::TestCollection::instance(void) {

@@ -21,7 +21,7 @@ protected:
 	std::vector<void (T::*)(void)> tests;
 public:
 	Testable(const std::string name);
-	virtual ~Testable() {};
+	virtual ~Testable(void) {};
 	virtual void run(void);
 	virtual void report(std::ostream& out) const;
 };

@@ -20,7 +20,7 @@ private:
 	TestCollection(void);
 public:
 	~TestCollection(void);
-	static TestCollection& instance();
+	static TestCollection& instance(void);
 	void addTest(flt::ITestable& t);
 	void test(void);
 	void report(std::ostream& out) const;

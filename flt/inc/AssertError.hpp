@@ -40,7 +40,7 @@ private:
 public:
 	AssertError(unsigned long line, const std::string& file,
 			const std::string& func, const std::string& code);
-	virtual ~AssertError() throw();
+	virtual ~AssertError(void) throw();
 	void report(std::ostream& out) const;
 };
 

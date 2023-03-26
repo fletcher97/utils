@@ -8,10 +8,10 @@
 class bad
 {
 public:
-	bad() {};
-	~bad() {};
-	bool mytrue() {return true;};
-	bool myfalse() {return false;};
+	bad(void) {};
+	~bad(void) {};
+	bool mytrue(void) {return true;};
+	bool myfalse(void) {return false;};
 	bool inteq(int x, int y) {return x == y;};
 	bool intneq(int x, int y) {return x != y;};
 	int getmsg(void) {return 404;};
@@ -20,7 +20,7 @@ public:
 
 class badtest : public flt::Testable<badtest>, bad {
 public:
-	badtest() : flt::Testable<badtest>("badtest"), bad() {
+	badtest(void) : flt::Testable<badtest>("badtest"), bad() {
 		REGISTER(badtest, test_true)
 		REGISTER(badtest, test_false)
 		REGISTER(badtest, test_msg)
@@ -33,7 +33,7 @@ public:
 
 class badtest2 : public flt::Testable<badtest2>, bad {
 public:
-	badtest2() : flt::Testable<badtest2>("badtest2"), bad() {
+	badtest2(void) : flt::Testable<badtest2>("badtest2"), bad() {
 		REGISTER(badtest2, test_true)
 		REGISTER(badtest2, test_false)
 		REGISTER(badtest2, test_msg)
@@ -51,7 +51,7 @@ public:
 };
 
 int
-main()
+main(void)
 {
 	ADD_TEST(badtest)
 	ADD_TEST(badtest2)
