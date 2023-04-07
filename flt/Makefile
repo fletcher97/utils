@@ -3,7 +3,7 @@
 ################################################################################
 
 # Makefile by fletcher97
-# Version: 5
+# Version: 5.1
 # Repo: www.github.com/fletcher97/utils
 
 # v5: Added testing capabilities to the makefile. You can now places Tests in
