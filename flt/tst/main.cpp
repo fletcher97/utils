@@ -158,6 +158,6 @@ main(void)
 	check_timer_get(100000000, 50000000);
 	check_timer_get(1000000000, 500000000);
 
-	LOG_CLOSE_FILE()
+	LOG_CLOSE_FILE
 	return 0;
 }

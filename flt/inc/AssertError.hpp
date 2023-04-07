@@ -19,7 +19,7 @@
 #define ASSERT_THROW(X,E) {try{\
 		X;\
 		throw flt::AssertError(__LINE__, __FILE__, __func__, "Throw check failed: "#X" didn't throw");\
-	}catch(E e){} catch (...){\
+	}catch(E &e){} catch (...){\
 		throw flt::AssertError(__LINE__, __FILE__, __func__, "Throw check failed: "#X" didn't throw the expected "#E" type");}}
 
 #define ASSERT_NOTHROW(X) {try{\

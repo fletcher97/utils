@@ -2,6 +2,7 @@
 #define TIMER_HPP
 
 #include <string>
+#include <ctime>
 
 namespace flt
 {

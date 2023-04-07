@@ -18,7 +18,7 @@ flt::Testable<T>::run(void) {
 		try {
 			(dynamic_cast<T*>(this)->*(*it))();
 			this->_batch.pass();
-		} catch (AssertError e) {
+		} catch (AssertError &e) {
 			this->_batch.error(e);
 		}
 	}

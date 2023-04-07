@@ -24,7 +24,7 @@ namespace flt
 #define FLT_LOG_FATAL_COLOR_FG "\033[38;5;0m\033[48;5;160m"
 
 #define LOG_OPEN_FILE(path)
-#define LOG_CLOSE_FILE(path)
+#define LOG_CLOSE_FILE
 
 #define LOG_TRACE(msg)
 #define LOG_DEBUG(msg)
@@ -39,7 +39,7 @@ namespace flt
 	#define LOG_OPEN_FILE(path) flt::Log::openFile(path);
 
 	#undef LOG_CLOSE_FILE
-	#define LOG_CLOSE_FILE(path) flt::Log::closeFile(path);
+	#define LOG_CLOSE_FILE flt::Log::closeFile();
 
 	#if (LOG_LVL <= FLT_LOG_TRACE_LVL)
 		#undef LOG_TRACE
