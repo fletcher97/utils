@@ -260,13 +260,13 @@ DEFAULT_LIBS := ${LIBFT_ROOT}
 # small list of common targets in most makefiles.
 DEFAULT_LIB_RULES := all clean re
 
-# All projects with a copy of this makefile v2.1 and up ate garanteed to work
+# All projects with a copy of this makefile v2.1 and up are garanteed to work
 # with these targets. If you wish to not use them just comment the lines you
 # don't want.
 DEFAULT_LIB_RULES += fclean clean_all clean_dep
 DEFAULT_LIB_RULES += debug debug_re debug_asan debug_asan_re
 
-# All projects with a copy of this makefile v2.2 and up ate garanteed to work
+# All projects with a copy of this makefile v2.2 and up are garanteed to work
 # with these targets. If you wish to not use them just comment the lines you
 # don't want.
 DEFAULT_LIB_RULES += debug_tsan debug_tsan_re debug_msan debug_msan_re
