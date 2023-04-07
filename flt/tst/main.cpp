@@ -3,6 +3,8 @@
 #include "Testable.tpp"
 #include "TestCollection.hpp"
 
+#include "Timer.hpp"
+
 #include <iostream>
 
 class bad
@@ -50,9 +52,53 @@ public:
 	void test_small_throw2(void) {ASSERT_THROW(small(10),std::invalid_argument)};
 };
 
+static long
+check_timer(long x) {
+	FLT_TIME("check_timer")
+	long sum = 0;
+	for (long i = 0; i < x; i++) {
+		sum += i;
+	}
+	return sum;
+}
+
+static long
+check_timer_reset(long x, long reset) {
+	FLT_TIME("check_timer_reset")
+	long sum = 0;
+	for (long i = 0; i < x; i++) {
+		if (i == reset) {FLT_TIME_RESET}
+		sum += i;
+	}
+	return sum;
+}
+
+static long
+check_timer_log(long x, long reset) {
+	FLT_TIME("check_timer_log")
+	long sum = 0;
+	for (long i = 0; i < x; i++) {
+		if (i == reset) {FLT_TIME_LOG}
+		sum += i;
+	}
+	return sum;
+}
+
+static long
+check_timer_get(long x, long reset) {
+	FLT_TIME("check_timer_get")
+	long sum = 0;
+	for (long i = 0; i < x; i++) {
+		if (i == reset) {LOG_DEBUG("Halfway at: " << FLT_TIME_GET)}
+		sum += i;
+	}
+	return sum;
+}
+
 int
 main(void)
 {
+	FLT_TIME("main")
 	ADD_TEST(badtest)
 	ADD_TEST(badtest2)
 
@@ -67,6 +113,50 @@ main(void)
 	LOG_WARN("Message abc ....")
 	LOG_ERROR("Message abc ....")
 	LOG_FATAL("Message abc ....")
+
+	check_timer(1);
+	check_timer(10);
+	check_timer(100);
+	check_timer(1000);
+	check_timer(10000);
+	check_timer(100000);
+	check_timer(1000000);
+	check_timer(10000000);
+	check_timer(100000000);
+	check_timer(1000000000);
+
+	check_timer_reset(1, 0);
+	check_timer_reset(10, 5);
+	check_timer_reset(100, 50);
+	check_timer_reset(1000, 500);
+	check_timer_reset(10000, 5000);
+	check_timer_reset(100000, 50000);
+	check_timer_reset(1000000, 500000);
+	check_timer_reset(10000000, 5000000);
+	check_timer_reset(100000000, 50000000);
+	check_timer_reset(1000000000, 500000000);
+
+	check_timer_log(1, 0);
+	check_timer_log(10, 5);
+	check_timer_log(100, 50);
+	check_timer_log(1000, 500);
+	check_timer_log(10000, 5000);
+	check_timer_log(100000, 50000);
+	check_timer_log(1000000, 500000);
+	check_timer_log(10000000, 5000000);
+	check_timer_log(100000000, 50000000);
+	check_timer_log(1000000000, 500000000);
+
+	check_timer_get(1, 0);
+	check_timer_get(10, 5);
+	check_timer_get(100, 50);
+	check_timer_get(1000, 500);
+	check_timer_get(10000, 5000);
+	check_timer_get(100000, 50000);
+	check_timer_get(1000000, 500000);
+	check_timer_get(10000000, 5000000);
+	check_timer_get(100000000, 50000000);
+	check_timer_get(1000000000, 500000000);
 
 	LOG_CLOSE_FILE()
 	return 0;

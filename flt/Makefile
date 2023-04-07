@@ -98,6 +98,13 @@ VERBOSE := 1
 # By default debug is none.
 LOG_LVL := none
 
+# Timer switch. Turns compilation with timer support on or off. To turn the
+# timer on simply set this variable to on. The timer in the FLT lib will be
+# available for use in your program (assuming you are using the FLT lib)
+#
+# By default the timer is off
+TIMER := off
+
 # Name prefix for test executable
 TEST_PREFIX := test_
 
@@ -176,7 +183,7 @@ endif
 DFLAGS := -g
 
 # Debug lvl flag
-ifeq (${LOG_LVL}, none)
+ifeq (${LOG_LVL},none)
 	CFLAGS += -ULOG_LVL
 else ifeq (${LOG_LVL}, trace)
 	CFLAGS += -DLOG_LVL=FLT_LOG_TRACE_LVL
@@ -190,6 +197,11 @@ else ifeq (${LOG_LVL}, error)
 	CFLAGS += -DLOG_LVL=FLT_LOG_ERROR_LVL
 else ifeq (${LOG_LVL}, fatal)
 	CFLAGS += -DLOG_LVL=FLT_LOG_FATAL_LVL
+endif
+
+# Timer activation
+ifeq (${TIMER},on)
+	CFLAGS += -DFLT_TIMER
 endif
 
 # Coverage flags
@@ -279,7 +291,7 @@ endif
 # Exemple:
 # DIRS := folder1/:folder2/
 # DIRS += folder1/:folder3/:folder4/
-DIRS := log/:unit_test/
+DIRS := log/:unit_test/:timer/
 
 # List of directories with tests. Formating follows the same rules as DIRS
 # above. All folders are relative to TST_ROOT. Each group of folder should only
@@ -530,6 +542,7 @@ targets:
 		| sort
 
 compile-test: CFLAGS += -DLOG_LVL=FLT_LOG_TRACE_LVL
+compile-test: CFLAGS += -DFLT_TIMER
 compile-test: ${addprefix compile-test/,${NAMES}}
 compile-test: ${addprefix compile-test/${TEST_PREFIX},${NAMES}}
 
