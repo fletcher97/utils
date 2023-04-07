@@ -114,6 +114,9 @@ main(void)
 	LOG_ERROR("Message abc ....")
 	LOG_FATAL("Message abc ....")
 
+	LOG_OPEN_FILE("forbiden.log")
+	LOG_OPEN_FILE("timer.log")
+
 	check_timer(1);
 	check_timer(10);
 	check_timer(100);
