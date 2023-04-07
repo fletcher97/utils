@@ -471,11 +471,14 @@ debug: CFLAGS += ${DFLAGS}
 debug: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
 
 debug_cov: CFLAGS += ${COVFLAGS}
-debug_cov: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
+debug_cov: all
+
+debug_cov_tests: CFLAGS += ${COVFLAGS}
+debug_cov_tests: tests
 
 cov: debug_cov
 	${AT}mkdir -p ${COV_ROOT} ${BLOCK}
-	${AT}gcov -arHs src obj/*.gc* ${BLOCK}
+	${AT}gcov -arHs src obj/**/.gc* ${BLOCK}
 	${AT}mv *.gcov ${COV_ROOT} ${BLOCK}
 
 obj/asan/asan.o: src/asan/asan.c
@@ -495,6 +498,8 @@ debug_msan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
 debug_re: fclean debug
 
 debug_cov_re: fclean debug_cov
+
+debug_cov_tests_re: fclean debug_cov_tests
 
 debug_asan_re: fclean debug_asan
 
