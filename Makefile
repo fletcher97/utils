@@ -3,7 +3,7 @@
 ################################################################################
 
 # Makefile by fletcher97
-# Version: 5
+# Version: 5.1
 # Repo: www.github.com/fletcher97/utils
 
 # v5: Added testing capabilities to the makefile. You can now places Tests in
@@ -96,6 +96,13 @@ VERBOSE := 1
 # By default debug is none.
 DEBUG_LVL := none
 
+# Timer switch. Turns compilation with timer support on or off. To turn the
+# timer on simply set this variable to on. The timer in the FLT lib will be
+# available for use in your program (assuming you are using the FLT lib)
+#
+# By default the timer is off
+TIMER := off
+
 # Name prefix for test executable
 TEST_PREFIX := test_
 
@@ -174,7 +181,7 @@ endif
 DFLAGS := -g
 
 # Debug lvl flag
-ifeq (${DEBUG_LVL}, none)
+ifeq (${DEBUG_LVL},none)
 	CFLAGS += -UDEBUG_LVL
 else ifeq (${DEBUG_LVL}, trace)
 	CFLAGS += -DDEBUG_LVL=TRACE
@@ -188,6 +195,11 @@ else ifeq (${DEBUG_LVL}, error)
 	CFLAGS += -DDEBUG_LVL=ERROR
 else ifeq (${DEBUG_LVL}, fatal)
 	CFLAGS += -DDEBUG_LVL=FATAL
+endif
+
+# Timer activation
+ifeq (${TIMER},on)
+	CFLAGS += -DFLT_TIMER
 endif
 
 # Coverage flags
@@ -531,6 +543,7 @@ targets:
 		| sort
 
 compile-test: CFLAGS += -DDEBUG_LVL=TRACE
+compile-test: CFLAGS += -DFLT_TIMER
 compile-test: ${addprefix compile-test/,${NAMES}}
 compile-test: ${addprefix compile-test/${TEST_PREFIX},${NAMES}}
 
