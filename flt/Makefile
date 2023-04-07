@@ -146,7 +146,7 @@ else ifeq (${LANG},C++)
 endif
 
 # Compiler flags
-CFLAGS := -Wall -Wextra -Werror -g
+CFLAGS := -Wall -Wextra -Werror
 ifeq (${LANG},C++)
 	CFLAGS += -std=c++98
 endif
