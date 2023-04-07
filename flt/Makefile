@@ -129,7 +129,7 @@ LANG := C++
 # Specify the compiler to use. In conjuntion with the language it can pick the
 # right compiler and the right version of the compiler (i.e. gcc vs g++).
 # Supported option: LLVM, GNU
-COMPILER=LLVM
+COMPILER=GNU
 
 ################################################################################
 # Compiler & Flags
