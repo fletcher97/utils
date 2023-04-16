@@ -484,8 +484,9 @@ clean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@)
 		-name "*.gcda" -delete -o -name "*.gcno" -delete ${BLOCK}
 	${AT}mkdir -p ${COV_ROOT} ${BLOCK}
 	${AT}find ${COV_ROOT} -type f -name "*.gcov" -delete ${BLOCK}
+	${AT}mkdir -p ${REP_ROOT} ${BLOCK}
 	${AT}find ${REP_ROOT} -type f -delete ${BLOCK}
-	${AT}rm -f report.info ${BLOCK}
+	${AT}rm -f coverage.info ${BLOCK}
 
 fclean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) clean
 	${AT}printf "\033[38;5;1m[REMOVING BINARIES]\033[0m\n" ${BLOCK}
@@ -514,15 +515,15 @@ debug_tests: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) tests
 debug_cov: CFLAGS += ${COVFLAGS}
 debug_cov: tests
 
-cov: debug_cov
+cov:
 	${AT}mkdir -p ${COV_ROOT} ${BLOCK}
-	${AT}gcov -arHs src obj/*.gc* ${BLOCK}
+	${AT}gcov -arHs $$(find ${OBJ_ROOT} -name "*.gc*") ${BLOCK}
 	${AT}mv *.gcov ${COV_ROOT} ${BLOCK}
 
 lcov:
 	${AT}lcov -c -b . -d . -o coverage.info --no-external --rc lcov_branch_coverage=1 --filter branch,function --ignore-errors mismatch${BLOCK}
 	${AT}mkdir -p ${REP_ROOT} ${BLOCK}
-	${AT}genhtml report.info -o ${REP_ROOT} --rc genhtml_branch_coverage=1 --demangle-cpp --legend --filter branch,function --dark-mode${BLOCK}
+	${AT}genhtml coverage.info -o ${REP_ROOT} --rc genhtml_branch_coverage=1 --demangle-cpp --legend --filter branch,function --dark-mode${BLOCK}
 
 obj/asan/asan.o: src/asan/asan.c
 	${AT}mkdir -p ${@D} ${BLOCK}
@@ -627,7 +628,7 @@ uncrustify-check:
 .PHONY: re all tests
 
 ################################################################################
-# Constantes
+# Constants
 ################################################################################
 
 NULL =
