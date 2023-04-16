@@ -20,7 +20,7 @@
 # functions should now be specified in a different variable. A merge function
 # was also added to aide in the parsing of the required files for tests.
 
-# v4.1: Adde debug variable to specify what debug lvl the code should be
+# v4.1: Added debug variable to specify what debug lvl the code should be
 # compiled with. If the code is prepared to compile with this flag, it's
 # behaviour should change depending on the level set. Setting this option with
 # code that is not written with this in mind should not be affected.
@@ -248,13 +248,13 @@ TST_ROOT := tst/
 
 ifeq (${CREATE_LIB_TARGETS},1)
 
-# Libft
-LIBFT_ROOT := ${LIB_ROOT}libft/
-LIBFT_INC := ${LIBFT_ROOT}inc/
-LIBFT := ${LIBFT_ROOT}bin/libft.a
+# Libflt
+LIBFLT_ROOT := ${LIB_ROOT}libflt/
+LIBFLT_INC := ${LIBFLT_ROOT}inc/ ${LIBFLT_ROOT}inc/tpl/ ${LIBFLT_ROOT}inc/imp/
+LIBFLT := ${LIBFT_ROOT}bin/libflt.a
 
-INC_DIRS += ${LIBFT_INC}
-LIBS += -L${LIBFT_ROOT}bin -lft
+INC_DIRS += ${LIBFLT_INC}
+LIBS += -L${LIBFLT_ROOT}bin -lflt
 
 # Libraries for which to create default targets. All libraries in this list will
 # have targets created autimatically. The targets that are created are set in
