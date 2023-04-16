@@ -3,10 +3,17 @@
 ################################################################################
 
 # Makefile by fletcher97
-# Version: 5.1
+# Version: 5.2
 # Repo: www.github.com/fletcher97/utils
 
-# v5: Added testing capabilities to the makefile. You can now places Tests in
+# v5.2: Added libflt seccion. All libflt specific configurations are now
+# separated. Added timer configuration for libflt. A new task to generate
+# coverage reports with lcov was added. All files generated will be stored in
+# REP_ROOT. A new section dedicated to running tasks at the start was added
+# (init). This was required fot the new vars task. Also fixed minor bugs when
+# using iMac.
+
+# v5: Added testing capabilities to the makefile. You can now place Tests in
 # TST_ROOT or a subfolder and treat it the same as you would SRC_ROOT. For each
 # executable a test executable is now generated. It will use the TST_DIRS that
 # have the same index as SRC_DIRS to test them. An important change is that main
@@ -63,6 +70,24 @@
 # the library section.
 
 ################################################################################
+# Init
+################################################################################
+
+# List of default variables (used to filter out when printing own variables)
+DEFAULT_VARS := ${.VARIABLES}
+
+# List of variables that should be ignored when print own variables
+IGNORE_VARS = DEFAULT_VARS
+
+# Ignore functions
+IGNORE_VARS += _index index lookup rmdup get_files get_files_tests
+IGNORE_VARS += get_lib_target _merge merge
+
+# Ignore templates
+IGNORE_VARS += make_bin_def make_obj_def make_dep_def make_lib_def
+IGNORE_VARS += make_compile_test_def make_compile_test_test_def
+
+################################################################################
 # Project Variables
 ################################################################################
 
@@ -94,7 +119,7 @@ VERBOSE := 1
 # trace/debug/info/warn/error/critical: set DEBUG macro to the given level
 #
 # By default debug is none.
-DEBUG_LVL := none
+LOG_LVL := none
 
 # Timer switch. Turns compilation with timer support on or off. To turn the
 # timer on simply set this variable to on. The timer in the FLT lib will be
@@ -122,12 +147,17 @@ PEDANTIC := true
 # Specify the language use by your program. This will allow to detect file
 # extentions automatically (not implemented). It also allows fo warnings to be
 # activated/deactivated based on the language used.
-LANG := C
+LANG := C++
 
 # Specify the compiler to use. In conjuntion with the language it can pick the
 # right compiler and the right version of the compiler (i.e. gcc vs g++).
 # Supported option: LLVM, GNU
-COMPILER=GNU
+COMPILER = GNU
+
+# If we are on OSX force compiler to be LLVM.
+ifeq ($(shell uname),Darwin)
+	COMPILER := LLVM
+endif
 
 ################################################################################
 # Compiler & Flags
@@ -180,30 +210,8 @@ endif
 # Generic debug flags
 DFLAGS := -g
 
-# Debug lvl flag
-ifeq (${DEBUG_LVL},none)
-	CFLAGS += -UDEBUG_LVL
-else ifeq (${DEBUG_LVL}, trace)
-	CFLAGS += -DDEBUG_LVL=TRACE
-else ifeq (${DEBUG_LVL}, debug)
-	CFLAGS += -DDEBUG_LVL=DEBUG
-else ifeq (${DEBUG_LVL}, info)
-	CFLAGS += -DDEBUG_LVL=INFO
-else ifeq (${DEBUG_LVL}, warn)
-	CFLAGS += -DDEBUG_LVL=WARN
-else ifeq (${DEBUG_LVL}, error)
-	CFLAGS += -DDEBUG_LVL=ERROR
-else ifeq (${DEBUG_LVL}, fatal)
-	CFLAGS += -DDEBUG_LVL=FATAL
-endif
-
-# Timer activation
-ifeq (${TIMER},on)
-	CFLAGS += -DFLT_TIMER
-endif
-
 # Coverage flags
-COVFLAGS = -fprofile-arcs -ftest-coverage
+COVFLAGS = -fprofile-arcs -ftest-coverage -O0
 
 # Address sanitizing flags
 ASAN := -fsanitize=address -fsanitize-recover=address
@@ -231,6 +239,7 @@ LIB_ROOT := lib/
 OBJ_ROOT := obj/
 SRC_ROOT := src/
 COV_ROOT := cov/
+REP_ROOT := rep/
 TST_ROOT := tst/
 
 ################################################################################
@@ -269,6 +278,32 @@ DEFAULT_LIB_RULES += debug debug_re debug_asan debug_asan_re
 # don't want.
 DEFAULT_LIB_RULES += debug_tsan debug_tsan_re debug_msan debug_msan_re
 
+endif
+
+################################################################################
+# Lib FLT
+################################################################################
+
+# Debug lvl flag
+ifeq (${LOG_LVL},none)
+	CFLAGS += -ULOG_LVL
+else ifeq (${LOG_LVL}, trace)
+	CFLAGS += -DLOG_LVL=FLT_LOG_TRACE_LVL
+else ifeq (${LOG_LVL}, debug)
+	CFLAGS += -DLOG_LVL=FLT_LOG_DEBUG_LVL
+else ifeq (${LOG_LVL}, info)
+	CFLAGS += -DLOG_LVL=FLT_LOG_INFO_LVL
+else ifeq (${LOG_LVL}, warn)
+	CFLAGS += -DLOG_LVL=FLT_LOG_WARN_LVL
+else ifeq (${LOG_LVL}, error)
+	CFLAGS += -DLOG_LVL=FLT_LOG_ERROR_LVL
+else ifeq (${LOG_LVL}, fatal)
+	CFLAGS += -DLOG_LVL=FLT_LOG_FATAL_LVL
+endif
+
+# Timer activation
+ifeq (${TIMER},on)
+	CFLAGS += -DFLT_TIMER
 endif
 
 ################################################################################
@@ -422,19 +457,19 @@ all: ${BINS}
 tests: ${TESTS}
 
 .SECONDEXPANSION:
-${BIN_ROOT}${NAME1}: ${LIBFT} $$(call get_files,$${@F},$${OBJS_LIST})
+${BIN_ROOT}${NAME1}: ${LIBFLT} $$(call get_files,$${@F},$${OBJS_LIST})
 	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${@D} ${BLOCK}
 	${AT}${CC} ${CFLAGS} ${INCS} ${ASAN_FILE}\
 		$(call get_files,${@F},${OBJS_LIST}) ${LIBS} -o $@ ${BLOCK}
 
-${BIN_ROOT}${TEST_PREFIX}${NAME1}: ${LIBFT} $$(call get_files_tests,$${@F},$${OBJS_LIST_TEST})
+${BIN_ROOT}${TEST_PREFIX}${NAME1}: ${LIBFLT} $$(call get_files_tests,$${@F},$${OBJS_LIST_TEST})
 	${AT}printf "\033[33m[CREATING ${@F}]\033[0m\n" ${BLOCK}
 	${AT}mkdir -p ${@D} ${BLOCK}
 	${AT}${CC} ${CFLAGS} ${INCS} ${ASAN_FILE}\
 		$(call get_files_tests,${@F},${OBJS_LIST_TEST}) ${LIBS} -o $@ ${BLOCK}
 
-${LIBFT}: $$(call get_lib_target,$${DEFAULT_LIBS},all) ;
+${LIBFLT}: $$(call get_lib_target,$${DEFAULT_LIBS},all) ;
 
 ################################################################################
 # Clean Targets
@@ -449,6 +484,8 @@ clean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@)
 		-name "*.gcda" -delete -o -name "*.gcno" -delete ${BLOCK}
 	${AT}mkdir -p ${COV_ROOT} ${BLOCK}
 	${AT}find ${COV_ROOT} -type f -name "*.gcov" -delete ${BLOCK}
+	${AT}find ${REP_ROOT} -type f -delete ${BLOCK}
+	${AT}rm -f report.info ${BLOCK}
 
 fclean: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) clean
 	${AT}printf "\033[38;5;1m[REMOVING BINARIES]\033[0m\n" ${BLOCK}
@@ -471,13 +508,21 @@ re: fclean all
 debug: CFLAGS += ${DFLAGS}
 debug: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
 
+debug_tests: CFLAGS += ${DFLAGS}
+debug_tests: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) tests
+
 debug_cov: CFLAGS += ${COVFLAGS}
-debug_cov: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
+debug_cov: tests
 
 cov: debug_cov
 	${AT}mkdir -p ${COV_ROOT} ${BLOCK}
 	${AT}gcov -arHs src obj/*.gc* ${BLOCK}
 	${AT}mv *.gcov ${COV_ROOT} ${BLOCK}
+
+lcov:
+	${AT}lcov -c -b . -d . -o coverage.info --no-external --rc lcov_branch_coverage=1 --filter branch,function --ignore-errors mismatch${BLOCK}
+	${AT}mkdir -p ${REP_ROOT} ${BLOCK}
+	${AT}genhtml report.info -o ${REP_ROOT} --rc genhtml_branch_coverage=1 --demangle-cpp --legend --filter branch,function --dark-mode${BLOCK}
 
 obj/asan/asan.o: src/asan/asan.c
 	${AT}mkdir -p ${@D} ${BLOCK}
@@ -494,6 +539,8 @@ debug_msan: CFLAGS += ${DFLAGS} ${MSAN}
 debug_msan: $$(call get_lib_target,$${DEFAULT_LIBS},$$@) all
 
 debug_re: fclean debug
+
+debug_tests_re: fclean debug_tests
 
 debug_cov_re: fclean debug_cov
 
@@ -512,6 +559,9 @@ debug_msan_re: fclean debug_msan
 	${AT}mkdir -p ${BIN_ROOT} ${BLOCK}
 	${AT}mkdir -p ${DEP_ROOT} ${BLOCK}
 	${AT}mkdir -p ${INC_ROOT} ${BLOCK}
+	${AT}mkdir -p ${TPL_ROOT} ${BLOCK}
+	${AT}mkdir -p ${IMP_ROOT} ${BLOCK}
+	${AT}mkdir -p ${LIB_ROOT} ${BLOCK}
 	${AT}mkdir -p ${OBJ_ROOT} ${BLOCK}
 	${AT}mkdir -p ${SRC_ROOT} ${BLOCK}
 	${AT}mkdir -p ${COV_ROOT} ${BLOCK}
@@ -542,10 +592,19 @@ targets:
 			{if ($$1 ~ "# makefile") {print $$2}}'\
 		| sort
 
+vars:
+	$(foreach v,\
+		$(sort $(filter-out ${DEFAULT_VARS} ${IGNORE_VARS},${.VARIABLES})),\
+		$(info ${v} = ${${v}}))
+
 compile-test: CFLAGS += -DDEBUG_LVL=TRACE
 compile-test: CFLAGS += -DFLT_TIMER
 compile-test: ${addprefix compile-test/,${NAMES}}
 compile-test: ${addprefix compile-test/${TEST_PREFIX},${NAMES}}
+
+uncrustify-check:
+	${AT}find . -name "*.[chit]pp" > uncrustify-targets.txt ${BLOCK}
+	${AT}uncrustify -c uncrustify.cfg --check -F uncrustify-targets.txt -l CPP -q${BLOCK}
 
 ################################################################################
 # .PHONY
@@ -556,15 +615,16 @@ compile-test: ${addprefix compile-test/${TEST_PREFIX},${NAMES}}
 
 # Phony debug targets
 .PHONY: debug debug_re debug_asan debug_asan_re debug_tsan debug_tsan_re
+.PHONY: debug_msan debug_msan_re
 
 # Phony cov targets
-.PHONY: debug_cov debug_cov_re cov
+.PHONY: debug_cov debug_cov_re cov lcov
 
 # Phony utility targets
-.PHONY: targets .FORCE compile-test
+.PHONY: targets .FORCE compile-test vars uncrustify-check
 
 # Phony execution targets
-.PHONY: re all
+.PHONY: re all tests
 
 ################################################################################
 # Constantes
